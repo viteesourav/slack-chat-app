@@ -1,0 +1,45 @@
+## Name Of the Application: Slack-chat
+## Tool used: 
+    Vscode, 
+    Next FrameWork,
+    ShadCn/ui components,
+    Convex --> for Managing Our Database
+
+## App progress:
+
+[26th Sept 2024]
+-- Have setup the next FrameWork and have also added ShadCn support, That provides configurable components.
+-- New folder --> features 
+    - created under src.
+    - Holds a folder --> auth [ecerything releated to auth i.e hooks, api calls, components and screen]
+-- Pages marked as "use client" --> means that page is a react component not a react server component
+    - react component: 
+        Rendered by the browser i.e the client, have access to react-hooks like useStatet and useEffect and DOM objects.
+        use:
+            - When need interactivity or dynamic content. Have to handle state and make API calls.
+            - eg: search Functionality.
+    - react server component: 
+        - These are rendered on the server and sent to the client.
+        - faster compared to client-rendered. No access to react hooks. 
+        use:
+            - no interactivity needed, pre-rendered HTML need to sent to client i.e static content.
+            - blog post or product-list page --> After loaded no change or interaction needed.
+
+[28th Sept 2024]
+-- Completed the basic layout for SignUp and SignIn Page.
+-- Using and setting up convex [Database Manager] --> ** This has to be always running in a seperate terminal, to have access to database **
+    --> Convex is the real-time database. i.e as soon as you update the database in backend, it will refelect in the client.
+
+NOTE:
+-- If parents are "use client" i.e client component --> Doesn't necessary means all it's children has to be clien too.
+-- They can have server component as children, as long as they are passed using children prop.
+
+** Basic Routing in Next App:
+    -- Under app folder --> crate a new folder eg: test --> add a new file eg: page.tsx.
+    -- Thus, now the above file open at: localhost:3000/test
+    -- NOTE: 
+        - page.tsx cannot have named export i.e export const page = () => {...} 
+        - It must have default export. i.e const page = () => {...} export default page;
+
+** Implementing Auth using Convex Auth
+    -- 
