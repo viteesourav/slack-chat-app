@@ -2,8 +2,15 @@
 ## Tool used: 
     Vscode, 
     Next FrameWork,
+    bun/npm [package-manger]
     ShadCn/ui components,
     Convex --> for Managing Our Database, Authentication.
+
+## App start guide:
+    - First naviagte inside the root dir: slack-chat/
+    - Need 2 terminals:
+        1. terminal_1 --> Runs the next application on localhost:3000 [bun run dev]
+        2. terminal_2 --> Runs convex service, supports Auth and database [bunx convex dev]
 
 ## App progress:
 
@@ -66,3 +73,6 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
         - Once setup, Add the clientId and secret key to convex and add google to auth.ts file and It should work.
 
 ## Both OAuth Working Without any Issue with ConvexAuth. --> Awesome..
+
+    3. Login with Creds: 
+        - 
