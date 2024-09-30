@@ -58,3 +58,11 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
         - "useAuthActions" from convexdev provides --> SignIn and SignOut method that handles signIn and SignOut for the user.
     NOTE:
         - signOut is making a post call to the previous url --> this we handled by force redirecting using window.location.href.
+    
+    2. For Google Login:
+        - Go to google cloud console. --> create project --> search "api & services" --> oAuth Consent --> external --> Fill in App Details.
+        - Skip the app img upload & under authorized domian fill the Convex HTTP Actions URL. [convex dashboard --> settings -> URL & Deploy key] --> Skip everything and save it.
+        - Once Done, create the creds, for Authorized js --> give localhost:3000 and for redirecting url, give the one from convex.
+        - Once setup, Add the clientId and secret key to convex and add google to auth.ts file and It should work.
+
+## Both OAuth Working Without any Issue with ConvexAuth. --> Awesome..

@@ -19,6 +19,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
         email: '',
         password: ''
     });
+    const [isBtnAction, setIsBtnAction] = useState(false);
 
     //Handles submit of the frm Data...
     const handleOnFrmSubmit = (evt: any) => {
@@ -29,7 +30,9 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
 
     //Handles login using OAuth...
     const handleLoginWithOAuth = (value: 'github' | 'google') => {
-        signIn(value);
+        setIsBtnAction(true);
+        signIn(value)
+            .finally(() => setIsBtnAction(false));
     }
 
     return (
@@ -45,7 +48,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
             <CardContent className="space-y-5 px-0 pb-0">
                 <form className="space-y-2.5" onSubmit={handleOnFrmSubmit}>
                     <Input
-                    disabled={false}
+                    disabled={isBtnAction}
                     value={frmData.email}
                     name="email"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -54,7 +57,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                     required
                      />
                      <Input
-                    disabled={false}
+                    disabled={isBtnAction}
                     value={frmData.password}
                     name="password"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -66,7 +69,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                         type='submit'
                         className="w-full"
                         size='lg'
-                        disabled={false}
+                        disabled={isBtnAction}
                     >
                         Continue
                     </Button>
@@ -77,9 +80,9 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                 <div className="flex flex-col gap-y-2.5">
                     <Button
                         variant='outline'
-                        disabled={false}
+                        disabled={isBtnAction}
                         size='lg'
-                        onClick={()=>{}}
+                        onClick={() => handleLoginWithOAuth('google')}
                         className="w-full relative"
                     >
                         <FcGoogle 
@@ -89,7 +92,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                     </Button>
                     <Button
                         variant='outline'
-                        disabled={false}
+                        disabled={isBtnAction}
                         size='lg'
                         onClick={() => handleLoginWithOAuth('github')}
                         className="w-full relative"
