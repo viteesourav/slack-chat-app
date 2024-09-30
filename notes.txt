@@ -75,4 +75,14 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
 ## Both OAuth Working Without any Issue with ConvexAuth. --> Awesome..
 
     3. Login with Creds: 
-        - 
+        - First, need to configure the auth.ts in convex folder --> Add Password provider.
+          - This takes care of both signIn and Register User/signUp.
+        - Next, You need to handle the Passoword login method.
+        - ConvexAuth Password provider --> Includes Password Check with length, one caps and one specialCharater. i.e Tester@123
+
+NOTE:
+    -- All the provider github, google and Password seems to be working fine.
+    -- Not sure, [** check **]
+        Why it's making post call, on successful Authentication via password and signOut call.
+    -- Work-Around:
+       The issue on redirecting using signIn and signOut method --> added window.location.reload() to refresh the browser url. --> makes a GET call.

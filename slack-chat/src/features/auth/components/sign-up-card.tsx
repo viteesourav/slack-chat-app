@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -6,21 +8,58 @@ import { FaGithub } from "react-icons/fa"
 import { FcGoogle } from 'react-icons/fc'
 import { SignInFlow } from "../types"
 import { useState } from "react"
+import { useAuthActions } from "@convex-dev/auth/react"
+import { TriangleAlert } from "lucide-react"
 
 interface SignUpCardProps {
     setLoginState: (state: SignInFlow) => void;
 }
 
 export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
+    const { signIn } = useAuthActions();  //from convexAuth...
     const[frmData, setFrmData] = useState<{email: string, password: string, confirmPassword: string}>({
         email: '',
         password: '',
         confirmPassword: ''
     });
     const[isShowPassErrMsg, setIsShowPassErrMsg] = useState<boolean>(false);
+    const [isBtnDisabled, setIsBtnDisabled] = useState(false);
+    const[errMsg, setErrMsg] = useState("");
+
+    //Handles signing in with New User with creds..
+    const handleOnFrmSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+        evt.preventDefault();
+        const {email, password, confirmPassword} = frmData;
+        if(!email || !password || !confirmPassword) {
+            setErrMsg('Email or Password cannot be Empty');
+            return;
+        }
+        if(isShowPassErrMsg) {
+            setErrMsg('Confirm Password doesnot match');
+            return;
+        }
+        setIsBtnDisabled(true);
+        signIn('password', {email, password, flow: 'signUp'})
+            .then(()=> {
+                window.location.reload(); // ** This is extra to refresh the page **
+            })
+            .catch(() => {
+                setErrMsg("Something Went Wrong");
+            })
+            .finally(() => {
+                setIsBtnDisabled(false);
+            })
+    }
+
+    //Handles Register user using OAuth...
+    const handleSignUpWithOAuth = (value: 'github' | 'google') => {
+        setIsBtnDisabled(true);
+        signIn(value)
+            .finally(() => setIsBtnDisabled(false));
+    }
 
     //function: checks the confirm pass logic...
-    const checkCnfrmPass = (evt:any) => {
+    const checkCnfrmPass = (evt:React.ChangeEvent<HTMLInputElement>) => {
         // update the confirm Pass string in the state...
         setFrmData(prev => ({
             ...prev,
@@ -45,11 +84,18 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                     use your email or another service to continue
                 </CardDescription>
             </CardHeader>
-
+            {
+                !!errMsg && (
+                    <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-destructive text-sm mb-6">
+                        <TriangleAlert className="size-4" />
+                        <p>{errMsg}</p>
+                    </div>
+                )
+            }
             <CardContent className="space-y-5 px-0 pb-0">
-                <form className="space-y-2.5">
+                <form className="space-y-2.5" onSubmit={handleOnFrmSubmit}>
                     <Input
-                    disabled={false}
+                    disabled={isBtnDisabled}
                     value={frmData.email}
                     name="email"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -58,7 +104,7 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                     required
                      />
                      <Input
-                    disabled={false}
+                    disabled={isBtnDisabled}
                     value={frmData.password}
                     name="password"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -68,7 +114,7 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                      />
                      <div className="w-full flex flex-col space-y-1">
                         <Input
-                        disabled={false}
+                        disabled={isBtnDisabled}
                         value={frmData.confirmPassword}
                         name="confirmPassword"
                         onChange={checkCnfrmPass}
@@ -82,7 +128,7 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                         type='submit'
                         className="w-full"
                         size='lg'
-                        disabled={false}
+                        disabled={isBtnDisabled}
                     >
                         Continue
                     </Button>
@@ -93,9 +139,9 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                 <div className="flex flex-col gap-y-2.5">
                     <Button
                         variant='outline'
-                        disabled={false}
+                        disabled={isBtnDisabled}
                         size='lg'
-                        onClick={()=>{}}
+                        onClick={() => handleSignUpWithOAuth('google')}
                         className="w-full relative"
                     >
                         <FcGoogle 
@@ -105,9 +151,9 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
                     </Button>
                     <Button
                         variant='outline'
-                        disabled={false}
+                        disabled={isBtnDisabled}
                         size='lg'
-                        onClick={()=>{}}
+                        onClick={() => handleSignUpWithOAuth('github')}
                         className="w-full relative"
                     >
                         <FaGithub 

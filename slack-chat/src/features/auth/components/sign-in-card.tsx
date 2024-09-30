@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,6 +10,7 @@ import { SignInFlow } from "../types"
 import { useState } from "react"
 
 import { useAuthActions } from "@convex-dev/auth/react";
+import { TriangleAlert } from "lucide-react"
 
 interface SignInCardProps {
     setLoginState: (state: SignInFlow) => void;
@@ -19,20 +22,32 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
         email: '',
         password: ''
     });
-    const [isBtnAction, setIsBtnAction] = useState(false);
+    const [isBtnDisabled, setIsBtnDisabled] = useState(false);
+    const[errMsg, setErrMsg] = useState("");
 
     //Handles submit of the frm Data...
-    const handleOnFrmSubmit = (evt: any) => {
+    const handleOnFrmSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        console.log('####Data Captured Successful');
-        console.log(frmData);
+        const {email, password} = frmData;
+        setIsBtnDisabled(true);
+        signIn('password', {email, password, flow: 'signIn'})
+            .then(()=> {
+                window.location.reload(); // ** This is extra to refresh the page **
+            })
+            .catch(() => {
+                console.log('### Error While logging');
+                setErrMsg("Either email or password is incorrect");
+            })
+            .finally(() => {
+                setIsBtnDisabled(false);
+            })
     }
 
     //Handles login using OAuth...
     const handleLoginWithOAuth = (value: 'github' | 'google') => {
-        setIsBtnAction(true);
+        setIsBtnDisabled(true);
         signIn(value)
-            .finally(() => setIsBtnAction(false));
+            .finally(() => setIsBtnDisabled(false));
     }
 
     return (
@@ -45,10 +60,18 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                     use your email or another service to continue
                 </CardDescription>
             </CardHeader>
+            {
+                !!errMsg && (
+                    <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-destructive text-sm mb-6">
+                        <TriangleAlert className="size-4" />
+                        <p>{errMsg}</p>
+                    </div>
+                )
+            }
             <CardContent className="space-y-5 px-0 pb-0">
                 <form className="space-y-2.5" onSubmit={handleOnFrmSubmit}>
                     <Input
-                    disabled={isBtnAction}
+                    disabled={isBtnDisabled}
                     value={frmData.email}
                     name="email"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -57,7 +80,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                     required
                      />
                      <Input
-                    disabled={isBtnAction}
+                    disabled={isBtnDisabled}
                     value={frmData.password}
                     name="password"
                     onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
@@ -69,7 +92,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                         type='submit'
                         className="w-full"
                         size='lg'
-                        disabled={isBtnAction}
+                        disabled={isBtnDisabled}
                     >
                         Continue
                     </Button>
@@ -80,7 +103,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                 <div className="flex flex-col gap-y-2.5">
                     <Button
                         variant='outline'
-                        disabled={isBtnAction}
+                        disabled={isBtnDisabled}
                         size='lg'
                         onClick={() => handleLoginWithOAuth('google')}
                         className="w-full relative"
@@ -92,7 +115,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                     </Button>
                     <Button
                         variant='outline'
-                        disabled={isBtnAction}
+                        disabled={isBtnDisabled}
                         size='lg'
                         onClick={() => handleLoginWithOAuth('github')}
                         className="w-full relative"

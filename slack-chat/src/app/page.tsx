@@ -7,9 +7,12 @@ import { useAuthActions } from "@convex-dev/auth/react";
 export default function Home() {
   const { signOut } = useAuthActions();
 
-  const handleSignOut = async () => {
-    await signOut();
-    window.location.href = '/auth';
+  const handleSignOut = () => {
+    signOut()
+      .then(() => {
+        window.location.reload(); // This reloads the browser url...
+      })
+    
   }
 
   return (
