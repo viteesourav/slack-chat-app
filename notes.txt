@@ -3,7 +3,7 @@
     Vscode, 
     Next FrameWork,
     ShadCn/ui components,
-    Convex --> for Managing Our Database
+    Convex --> for Managing Our Database, Authentication.
 
 ## App progress:
 
@@ -42,4 +42,6 @@ NOTE:
         - It must have default export. i.e const page = () => {...} export default page;
 
 ** Implementing Auth using Convex Auth
-    -- 
+    -- For Setting up convex --> follow the Docs. [https://docs.convex.dev/quickstart/nextjs]
+    -- Just Follow the ConvexAuth Docs. [https://labs.convex.dev/auth/setup]
+    -- Make sure you maintain the File-structure carefully and also Handles the import and export of Modules properly.
