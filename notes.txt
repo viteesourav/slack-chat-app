@@ -45,3 +45,16 @@ NOTE:
     -- For Setting up convex --> follow the Docs. [https://docs.convex.dev/quickstart/nextjs]
     -- Just Follow the ConvexAuth Docs. [https://labs.convex.dev/auth/setup]
     -- Make sure you maintain the File-structure carefully and also Handles the import and export of Modules properly.
+
+OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebook or Google Account.
+      -> Once user Authenticate on Third-party, he is landed back to App dashboard.
+
+-- Convex Auth helps in handling secrets between the third-party app and our backend.
+
+-- Login Provider setup using Convex-Auth [https://labs.convex.dev/auth/config/oauth]
+    1. For Github Login: [Configuration/OAuth]
+        - You need to first register a Oauth App in your Github profile --> Developer settings --> Oauth --> register your callback url and app details.
+        - Get the client Id and secrests that to be used --> Add to convex.
+        - "useAuthActions" from convexdev provides --> SignIn and SignOut method that handles signIn and SignOut for the user.
+    NOTE:
+        - signOut is making a post call to the previous url --> this we handled by force redirecting using window.location.href.

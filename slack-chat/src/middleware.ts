@@ -12,6 +12,11 @@ export default convexAuthNextjsMiddleware((request, { convexAuth }) => {
     if (!isAuthPage(request) && !convexAuth.isAuthenticated()) {
         return nextjsMiddlewareRedirect(request, "/auth");
     }
+ 
+    // If curr req page is AuthPage and the user is alredy Authenticated --> Redirect to the Landing Page..
+    if(isAuthPage(request) && convexAuth.isAuthenticated()) {
+        return nextjsMiddlewareRedirect(request, "/");
+    }
 
     //TODO: If the user is authenticated --> Take him away from the authPage...
 });

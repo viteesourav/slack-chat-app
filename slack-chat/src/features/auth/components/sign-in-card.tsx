@@ -7,11 +7,14 @@ import { FcGoogle } from 'react-icons/fc'
 import { SignInFlow } from "../types"
 import { useState } from "react"
 
+import { useAuthActions } from "@convex-dev/auth/react";
+
 interface SignInCardProps {
     setLoginState: (state: SignInFlow) => void;
 }
 
 export const SignInCard = ({setLoginState}:SignInCardProps) => {
+    const { signIn } = useAuthActions();  //from convexAuth...
     const[frmData, setFrmData] = useState<{email: string, password: string}>({
         email: '',
         password: ''
@@ -22,6 +25,11 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
         evt.preventDefault();
         console.log('####Data Captured Successful');
         console.log(frmData);
+    }
+
+    //Handles login using OAuth...
+    const handleLoginWithOAuth = (value: 'github' | 'google') => {
+        signIn(value);
     }
 
     return (
@@ -83,7 +91,7 @@ export const SignInCard = ({setLoginState}:SignInCardProps) => {
                         variant='outline'
                         disabled={false}
                         size='lg'
-                        onClick={()=>{}}
+                        onClick={() => handleLoginWithOAuth('github')}
                         className="w-full relative"
                     >
                         <FaGithub 
