@@ -51,6 +51,7 @@ NOTE:
 ** Implementing Auth using Convex Auth
     -- For Setting up convex --> follow the Docs. [https://docs.convex.dev/quickstart/nextjs]
     -- Just Follow the ConvexAuth Docs. [https://labs.convex.dev/auth/setup]
+    -- Use Auth.js under the hood.
     -- Make sure you maintain the File-structure carefully and also Handles the import and export of Modules properly.
 
 OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebook or Google Account.
@@ -86,3 +87,20 @@ NOTE:
         Why it's making post call, on successful Authentication via password and signOut call.
     -- Work-Around:
        The issue on redirecting using signIn and signOut method --> added window.location.reload() to refresh the browser url. --> makes a GET call.
+
+TODO:
+## Fix the user's name Field empty in Convex users table issue with Password Provider:
+    -- With OAuth, the name column in user table is automatically populated. But with Register user, It is Empty.
+    -- Fix:
+        - In auth.ts under convex folder, add the Passoword<DataModel>({...})
+        - Replace the normal Password Provider with this new CustomPassword.
+        - This will fill that column in the user table.
+
+NOTE:
+    To Clear all users session --> go to convex dashboard --> clear all Auth releated tables.
+
+NOTE:
+    -- use interface for Handling Object that wraps multiple types of data. reference: sign-up-card.tsx
+
+** Creating the Profile Button:
+    - 

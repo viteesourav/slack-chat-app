@@ -15,9 +15,18 @@ interface SignUpCardProps {
     setLoginState: (state: SignInFlow) => void;
 }
 
+//interfaces are generally defines the structure of any Object type...
+interface FrmFieldState {
+    name: string, 
+    email: string, 
+    password: string, 
+    confirmPassword: string
+}
+
 export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
     const { signIn } = useAuthActions();  //from convexAuth...
-    const[frmData, setFrmData] = useState<{email: string, password: string, confirmPassword: string}>({
+    const[frmData, setFrmData] = useState<FrmFieldState>({
+        name: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -29,8 +38,8 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
     //Handles signing in with New User with creds..
     const handleOnFrmSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        const {email, password, confirmPassword} = frmData;
-        if(!email || !password || !confirmPassword) {
+        const {name, email, password, confirmPassword} = frmData;
+        if(!name || !email || !password || !confirmPassword) {
             setErrMsg('Email or Password cannot be Empty');
             return;
         }
@@ -39,7 +48,7 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
             return;
         }
         setIsBtnDisabled(true);
-        signIn('password', {email, password, flow: 'signUp'})
+        signIn('password', {name, email, password, flow: 'signUp'})
             .then(()=> {
                 window.location.reload(); // ** This is extra to refresh the page **
             })
@@ -94,6 +103,14 @@ export const SignUpCard = ({setLoginState}:SignUpCardProps) => {
             }
             <CardContent className="space-y-5 px-0 pb-0">
                 <form className="space-y-2.5" onSubmit={handleOnFrmSubmit}>
+                    <Input
+                    disabled={isBtnDisabled}
+                    value={frmData.name}
+                    name="name"
+                    onChange={(evt) => setFrmData(prev => ({...prev, [evt.target.name]:evt.target.value}))}
+                    placeholder="Full Name"
+                    required
+                     />
                     <Input
                     disabled={isBtnDisabled}
                     value={frmData.email}

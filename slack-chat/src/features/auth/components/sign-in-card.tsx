@@ -16,9 +16,15 @@ interface SignInCardProps {
     setLoginState: (state: SignInFlow) => void;
 }
 
+interface FrmFieldState {
+    email: string, 
+    password: string,
+}
+
+
 export const SignInCard = ({setLoginState}:SignInCardProps) => {
     const { signIn } = useAuthActions();  //from convexAuth...
-    const[frmData, setFrmData] = useState<{email: string, password: string}>({
+    const[frmData, setFrmData] = useState<FrmFieldState>({
         email: '',
         password: ''
     });
