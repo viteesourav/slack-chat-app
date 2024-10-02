@@ -97,10 +97,38 @@ TODO:
         - This will fill that column in the user table.
 
 NOTE:
-    To Clear all users session --> go to convex dashboard --> clear all Auth releated tables.
+    -- To Clear all users session --> go to convex dashboard --> clear all Auth releated tables.
 
 NOTE:
     -- use interface for Handling Object that wraps multiple types of data. reference: sign-up-card.tsx
+    -- Page.tsx in any route folder under app eg: auth folder, Should do default export of the component.
+    -- Inside Components Folder, [ **This folder is created automatically when you use shadcn** ]
+        -> ui --> Components from shadcn.
+        -> convex-client-provider.tsx --> Links convex db with Our Next client.
+    -- Inside feature,
+        -> Feature wise we have folders. 
+            eg: auth --> contains all it's component used, type files and service calls.
 
 ** Creating the Profile Button:
-    - 
+    -- new Component Added --> user-button.tsx under feature/auth/component
+    -- shadcn component used --> avatar, dropdown-menu
+
+[2nd Oct 2024]
+
+## How to handle fetching the current loggedIn User Details...
+    - Under convex --> Create a new users.ts file --> export the query method from there.
+    - Create a custom Hook --> under Auth --> use-current-user.ts --> That brings details of the current loggedin User.
+    - Now you add this custom hook, whereEver you want to fetch current user details.
+    - Logically, 
+        - We need to get the current LoggedIn user details.
+        - In users.ts [under convex folder]
+            - We use getAuthUserId(ctx) --> Gives us the logged in User's Id.
+            - then to fetch the details, we use ctx.db.get(getAuthUserId) --> gives the details of the loggedin user.
+        - In Custom-hook: [under feature/auth/hooks]
+            - To make the call, useQuery -> pass the api.[folder_name-you-created-above].[method-you-exported].
+            - You have the data. --> use it as per need.
+    NOTE:
+        - Don't Forget to handle data as undefined [i.e It's Still fetching the data] and data as null -> No Response from DB.
+
+NOTE:
+    - From Component Files we can named export. But from page.tsx, we always need to default export.
