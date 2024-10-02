@@ -116,14 +116,14 @@ NOTE:
 
 ## How to handle fetching the current loggedIn User Details...
     - Under convex --> Create a new users.ts file --> export the query method from there.
-    - Create a custom Hook --> under Auth --> use-current-user.ts --> That brings details of the current loggedin User.
+    - Create a custom Hook --> under feature/auth/api --> use-current-user.ts --> That brings details of the current loggedin User.
     - Now you add this custom hook, whereEver you want to fetch current user details.
     - Logically, 
         - We need to get the current LoggedIn user details.
         - In users.ts [under convex folder]
             - We use getAuthUserId(ctx) --> Gives us the logged in User's Id.
             - then to fetch the details, we use ctx.db.get(getAuthUserId) --> gives the details of the loggedin user.
-        - In Custom-hook: [under feature/auth/hooks]
+        - In Custom-hook: [under feature/auth/api]
             - To make the call, useQuery -> pass the api.[folder_name-you-created-above].[method-you-exported].
             - You have the data. --> use it as per need.
     NOTE:
@@ -131,3 +131,69 @@ NOTE:
 
 NOTE:
     - From Component Files we can named export. But from page.tsx, we always need to default export.
+
+MileStone_1: 
+    -- We are able to Login using Password, OAuth [github and google].
+    -- We have a signIn and SignUp Page Built, With Input Validations and Database connected.
+    -- We are able to Naviagte to our Home Landing Page, have Profile Badge Implement.
+    -- Logout Functionality is Also Implemented.
+
+
+** WorkSpace Creation Api and Modal: 
+
+    -- New Table creation: [convex/schema.ts] --> Workspaces --> holds the name of workspace, who crated it and joinCode.
+    -- install new package:
+        1. jotai --> global state management.
+        2. dialog --> From shadcn, ui component
+    -- Write a workspace.ts [in Convex folder], then call the query from feature/workspaces/api/use-get-workspaces custom hook.
+    -- Logically, In Landing Page,
+        - If workSpace exists -> Go to that WorkSpace.
+        - If workspace doesn't exist --> Open a modal for user to Create a Workspace.
+
+## Create a Global state For the CreateWorkspaceModal with joti
+    -- First create a new file --> feature/workspaces/store/use-create-workspace-modal.
+    -- Then useAtom and atom from jotai and return the state.
+    Why ?
+        --> Basically to handle the modal, we can simply use useState boolean to handle it.
+        --> But useState will be specific to that component alone.
+        --> But with jotai, You just made a global state to control the modal state. *** coool ***
+
+-- Now, Create a new component for the create Workspace Dialoge Modal, Add it in the Layout.ts under src/app.
+    --> Better Way to handle more Modals:
+        - create a new modals.tsx under src/app/components.
+        - import all the modals, --> have a component that renders all the modals.
+        - Add this in the layout.tsx file. 
+    NOTE:
+        To Prevent hyderation error with jotai, When they gets render with server-side my mistake.
+        --> Solution: Make Sure the modals folder is client rendered --> useEffect and "useClient" Make it for sure client rendered.
+
+## Create an api end point to handle creation of workspace:
+    1. Handling the DB Insert:    
+        -- we will go to convex/workspace.ts --> add a new method createWorkSpace.
+        -- This will be mutation method i.e updating existing table.
+            NOTE: use query method when you are just reading from the table.
+        -- This Works with an args --> That is passed as param to the handler method.
+        -- Returns the newly created workspaceId.
+    2. Handle the api [contains workspace related hooks] under feature/workspace/api:
+        -- use-get-workspaces: Fetches all the workspaces for the current loggedIn userId.
+        -- use-create-workspace:
+            - Very powerful custom hook.
+            - Goal: To handle creation of new Workspace, all gives us the API states, like 
+                    isPending [time taken for the cration of workspace] --> used to diable the buttons and input fields during workspace creation.
+                    isSuccess -> Returns a success method, that holds the response as param. --> Can be used to determine what to do when the creation is successful.
+                    isError -> In case of error --> holds the Error Object as param. --> Can be used to render a Error fallback screen.
+                    isSettled -> Once the call is done, If any action, this method can be used.
+        
+        *** IMP: Best Example, how to write and use a Complex api custom hook with nextJs and Convex *** [use as reference]
+    3. A WorkSpace Landing Page:
+        - New folder added under app/workspace--> [workspaceId]/page.tsx  [** This is how dynamic rounting handled ***]
+        - eg: /workspace/34242424 --> lands to the the above page.
+        - that id can be extracted in PageProps Interface {params: {workspaceId: string}} [Note: The name here and the above in dynamic route must match]
+
+** Workspace Landing Page:
+
+    -- 
+
+
+MileStone_2
+    --  Now we are able to create a New Workspace and Land to that Workspace Route.
