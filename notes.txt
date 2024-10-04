@@ -88,7 +88,7 @@ NOTE:
     -- Work-Around:
        The issue on redirecting using signIn and signOut method --> added window.location.reload() to refresh the browser url. --> makes a GET call.
 
-TODO:
+[1st Oct 2024]
 ## Fix the user's name Field empty in Convex users table issue with Password Provider:
     -- With OAuth, the name column in user table is automatically populated. But with Register user, It is Empty.
     -- Fix:
@@ -190,10 +190,52 @@ MileStone_1:
         - eg: /workspace/34242424 --> lands to the the above page.
         - that id can be extracted in PageProps Interface {params: {workspaceId: string}} [Note: The name here and the above in dynamic route must match]
 
+TODO: [3rd Oct 2024]
+
 ** Workspace Landing Page:
+    
+    -- A new folder under src/hooks --> Holds the application level hooks.
+    -- A new hook added: use-workspace-id.ts --> It extracts the workspaceId that is passed in Params and Returns it. 
+    
+    ** NOTE: 
+        1. Make sure the above one it's a client component. 
+        2. useEffect, useParams --> This will not work if you dont mention the file as "use client".
+        3. "use client" --> Marks the boundary between a server-side rendered component and client-side rendered component.
+            -- Interactive websites tends to follow majorly clinet-side rendering.
+            -- Static read-only websites like blog posts, List of Itenary etc, where no user-interaction necessary can be server-side rendered. --> Just display Data to the user. 
+        4. If a page is "use client" --> And it renders others children using the children prop --> Doesnot mean all children will be client rendered, It can be server-rendered also as long as "children" prop is used to render them.
+    
+    -- A new db api added in convex/workspace.ts --> getById --> Fetches workspace Info based on passed workspaceId.
+    -- To Make the above call, create a customHook --> under feature/workspaces/api --> useQuery and fetch the data and apiState.
+    -- In the [workspaceId]/page.tsx --> Make the Above call to fetch workspace releated Data.
 
-    -- 
+    NOTE:
+        -- Page.tsx is a reserved keyword in nextJs to build the landing Page.
+        -- layout.tsx is also a reserved keyword to handle layout within the same route.
+        -- Other reserved keywords: error, loading. EXcept these you can keep whatever file you want inside route folder.
+    
+    ** Why Layout Needed ? --> ** Handles Common code between subRoutes **
+        -- somtime, We have reusable code, Inside the under same route. 
+            eg: under /workspace/[workspaceId] --> we can have many routes. like workspace/[workspaceId]/channel or workspace/[workspaceId] etc
+        -- So the layout holds common code like, sideBar or navbar that we want both of the above.
+        -- Layout dont get re-render on Route chnages. --> Big Performance Improvement. [** IMP **]
+        -- So To minimise code duplication and improve modularity, It's suggested to go ahead with layout 
 
+## Handling Layout for Workpace [app/workspace/[workspaceId]/layout.tsx]
+    -- Like Page, It also requires a default layout. **IMP**
+    -- Children:React.ReactNode --> Need to be added inside layout, so that it renders others route paths i.e [workspaceId]/page.tsx inside the parent Route [/workspace].
+    -- Now, Add the common code among the Routes inside this layout.
+    NOTE: Page.tsx and layout.tsx both will be under same Parent.
+
+    1. Create a Toolbar:
+        -- created --> /workspace/[workspaceId]/toolbar.tsx.
+        -- Add it to the layout.tsx
+
+NOTE:
+    -- the api, calls that we do for fetching data, Next not everytime, makes a call --> the response is usually cached. 
+    -- Only when some chnages hanppens in the backend then only It makes a new call to fetch the data. 
+    [Performance efficient] 
 
 MileStone_2
     --  Now we are able to create a New Workspace and Land to that Workspace Route.
+    -- 

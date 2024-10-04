@@ -1,15 +1,16 @@
+"use client";  //**NOTE: If this is missed, useWorkSpaceId won't work  */
 
-//NOTE: the param, takes workspaceId --> same name as the dynamic-folder name..
-interface WorkSpaceIdPageProps {
-    params: {
-        workspaceId: string;
-    }
-}
+import { useWorkSpaceId } from "@/hooks/use-workspace-id";
+import { useGetByIdWorkspace } from "@/features/workspaces/api/use-getById-workspaces";
 
-const WorkSpaceIdPage = ({params}: WorkSpaceIdPageProps) => {
+const WorkSpaceIdPage = () => {
+    const workspaceId = useWorkSpaceId();
+    const{data, isLoading} = useGetByIdWorkspace({id: workspaceId});
+    
     return (
         <div>
-            ID: {params.workspaceId}
+           <p>Details Of the WorkSpace</p>
+           <p>{JSON.stringify(data)}</p> 
         </div>
     )
 }

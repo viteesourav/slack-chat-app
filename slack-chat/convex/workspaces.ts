@@ -32,4 +32,21 @@ export const createWorkspace = mutation({
             joinCode,
         })
     }
+});
+
+//Method to fetch WorkSpace Details by loggedIn User...
+export const getById = query({
+    args: {
+        id: v.id("workSpaces")
+    },
+    handler: async (ctx, args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            throw new Error("Unauthorized");
+        }
+
+        return await ctx.db.get(args.id); //Fetch Workspace details based on the workspaceId.
+    }
 })
