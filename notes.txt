@@ -12,6 +12,9 @@
         1. terminal_1 --> Runs the next application on localhost:3000 [bun run dev]
         2. terminal_2 --> Runs convex service, supports Auth and database [bunx convex dev]
 
+## search with keyword "Issue:" to find potential issue with the Application.
+
+
 ## App progress:
 
 [26th Sept 2024]
@@ -64,8 +67,6 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
         - You need to first register a Oauth App in your Github profile --> Developer settings --> Oauth --> register your callback url and app details.
         - Get the client Id and secrests that to be used --> Add to convex.
         - "useAuthActions" from convexdev provides --> SignIn and SignOut method that handles signIn and SignOut for the user.
-    NOTE:
-        - signOut is making a post call to the previous url --> this we handled by force redirecting using window.location.href.
     
     2. For Google Login:
         - Go to google cloud console. --> create project --> search "api & services" --> oAuth Consent --> external --> Fill in App Details.
@@ -73,7 +74,7 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
         - Once Done, create the creds, for Authorized js --> give localhost:3000 and for redirecting url, give the one from convex.
         - Once setup, Add the clientId and secret key to convex and add google to auth.ts file and It should work.
 
-## Both OAuth Working Without any Issue with ConvexAuth. --> Awesome..
+## Both OAuth Working with ConvexAuth. --> Awesome..
 
     3. Login with Creds: 
         - First, need to configure the auth.ts in convex folder --> Add Password provider.
@@ -81,15 +82,15 @@ OAuth -> The user Clicks on a btn to signIn with third-party like Github, Facebo
         - Next, You need to handle the Passoword login method.
         - ConvexAuth Password provider --> Includes Password Check with length, one caps and one specialCharater. i.e Tester@123
 
-NOTE:
+** Issue:
     -- All the provider github, google and Password seems to be working fine.
     -- Not sure, [** check **]
         Why it's making post call, on successful Authentication via password and signOut call.
     -- Work-Around:
-       The issue on redirecting using signIn and signOut method --> added window.location.reload() to refresh the browser url. --> makes a GET call.
+       On redirecting using signIn and signOut method --> added window.location.reload() to refresh the browser url. --> makes a GET call.
 
 [1st Oct 2024]
-## Fix the user's name Field empty in Convex users table issue with Password Provider:
+## Fix the user's name Field empty in Convex users table with Password Provider:
     -- With OAuth, the name column in user table is automatically populated. But with Register user, It is Empty.
     -- Fix:
         - In auth.ts under convex folder, add the Passoword<DataModel>({...})
@@ -221,6 +222,8 @@ TODO: [3rd Oct 2024]
         -- Layout dont get re-render on Route chnages. --> Big Performance Improvement. [** IMP **]
         -- So To minimise code duplication and improve modularity, It's suggested to go ahead with layout 
 
+TODO: [5th Oct 2024]
+
 ## Handling Layout for Workpace [app/workspace/[workspaceId]/layout.tsx]
     -- Like Page, It also requires a default layout. **IMP**
     -- Children:React.ReactNode --> Need to be added inside layout, so that it renders others route paths i.e [workspaceId]/page.tsx inside the parent Route [/workspace].
@@ -230,11 +233,55 @@ TODO: [3rd Oct 2024]
     1. Create a Toolbar:
         -- created --> /workspace/[workspaceId]/toolbar.tsx.
         -- Add it to the layout.tsx
+    
+    2. Creating a SideBar
+        -- created --> /workspace/[workspaceId]/sidebar.tsx.
+        -- Add it to the layout.tsx
+        -- Include workspace-switcher component --> Have DropDown, Allows user to switch between the workspaces.
+        -- Features of workspace-switchers:
+            - Allows user to view his active workspace, along with other worspaces. [NOTE: all workspaces will show here.]
+            - Allows him to navigate to a particular workspace.
+
+** Issue: 
+    -- When we create a new Workspace --> it's redirecting to the new workspace -> but the click events on the entire page is not working.
+    -- It is Woking when, we force reload the page.
+    -- Problem: In create-workspace-modal.tsx file,
+        --> After fetching the new workspace data, we are navigating using router.push from next/navigation.
+        --> Seems like this is removing the events.
+        --> no Error on the console.
+    -- WorkAround,
+        --> Instead of using router.push --> use window.location.assign() --> Navigates and reload the whole page. [** costly operation **]
+
+TO DO: 
+    3. Sidebar buttons:
+        -- created --> /workspace/[workspaceId]/sidebar-button.tsx.
+        -- Shows various Buttons on the Sidebar with dedicated Icons and Functionality.
+    NOTE:
+        -- If using shadcn, and you need to conditionaly use tailwind classes. --> use cn()
+        -- For reference: sidebar-button.tsx
+        -- why ? 
+            -- alternative way of doing that like {`isActive ? 'classes if it's true' : 'classses if it's false'`}
+            -- High chances of getting conflict and might cause error.
+        NOTE: *** shadcn must be installed ***
 
 NOTE:
     -- the api, calls that we do for fetching data, Next not everytime, makes a call --> the response is usually cached. 
     -- Only when some chnages hanppens in the backend then only It makes a new call to fetch the data. 
-    [Performance efficient] 
+    [Performance efficient]
+
+
+NOTE: ** Important JS/React Things to Remember **
+    -- const {data:workspace, isLoading:workspaceIsLoading} = Obj.
+        --> here you destructure data and isLoading from Obj and also respectively renamed them. [** Awesome Implementation of JS **]
+    -- eg: const [_open, setOpen] = useSomeHook();
+        --> '_' infront of open is a way to say that, I am not going to use that varibale in the code.
+    -- While defining interface for props for any component, If a prop is optional, define it like..
+        interface DummyCompProps {
+            prop1: string;
+            prop2: boolean;
+            prop3 ?: boolean;
+        }
+    --> In the above example, prop1 and prop2 are mandatory but prop3 is optional.
 
 MileStone_2
     --  Now we are able to create a New Workspace and Land to that Workspace Route.
