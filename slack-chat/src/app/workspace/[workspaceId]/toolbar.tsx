@@ -14,7 +14,7 @@ export const Toolbar = () => {
         <div className="flex flex-1 space-x-3 justify-start items-center" >
             <Armchair className="size-9 text-orange-300 ml-3" />
             <div className="text-xl font-semibold text-white">
-                Slack-chat
+                Slack Chat
             </div>
         </div>
         
