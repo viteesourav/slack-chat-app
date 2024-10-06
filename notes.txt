@@ -252,7 +252,6 @@ TODO: [5th Oct 2024]
     -- WorkAround,
         --> Instead of using router.push --> use window.location.assign() --> Navigates and reload the whole page. [** costly operation **]
 
-TO DO: 
     3. Sidebar buttons:
         -- created --> /workspace/[workspaceId]/sidebar-button.tsx.
         -- Shows various Buttons on the Sidebar with dedicated Icons and Functionality.
@@ -283,6 +282,26 @@ NOTE: ** Important JS/React Things to Remember **
         }
     --> In the above example, prop1 and prop2 are mandatory but prop3 is optional.
 
-MileStone_2
-    --  Now we are able to create a New Workspace and Land to that Workspace Route.
-    -- 
+## Implementation of Member Functionality:
+    -- New Schema Created --> members
+    --> Each User will have it's own member profile --> That tells us about 2 things:
+        1. the workspace he have access to.
+        2. What kind of access he have ? "Admin" or "Member".
+    -- Schema Changes to handle add data in members table, and query data from member table. --> convex/workspace.ts
+    -- Code generation should be random, instead of some fix values.
+
+    Functionality:
+        -- If a user creates a new workspace --> He should be added as "Admin" to the memebers table.
+    NOTE:
+        -- Creating index while defining Schema --> helps to query faster. Ref --> convex/schema.ts
+        -- For FetchData with "query" keyword in convex/workspace.ts --> Dont throw error, instead return empty value or null.
+        -- For Creation with "mutation" keyword --> you can throw error. 
+
+    Conclusion:
+        -- users can create different workspaces and he can only view those workspace which he created.
+        -- JoinCode is randomly generated, instead of hardCodded.
+
+MileStone_2:
+    -- Now we are able to create a New Workspace and Land to that Workspace Route.
+    -- Created the toolbar/navbar and sidebar UI. 
+    -- Diffenet users with can create and view their own workspaces. 
