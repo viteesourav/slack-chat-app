@@ -202,6 +202,10 @@ TODO: [3rd Oct 2024]
         1. Make sure the above one it's a client component. 
         2. useEffect, useParams --> This will not work if you dont mention the file as "use client".
         3. "use client" --> Marks the boundary between a server-side rendered component and client-side rendered component.
+            -- i.e once in parent component, you mark 'use client' --> and it renderes subsequent children components.
+                --> then untill specified, all children will follow 'use client', and no need to explictly mention them inside each children component.
+                --> thus, once you cross the boundary, you are good.
+                --> Ref: src/workspace/[id]/layout --> our parent component --> that render all it's children like sidebar, toolbar etc. [we dont have 'use client'] --> but we are able to use hooks and state management.
             -- Interactive websites tends to follow majorly clinet-side rendering.
             -- Static read-only websites like blog posts, List of Itenary etc, where no user-interaction necessary can be server-side rendered. --> Just display Data to the user. 
         4. If a page is "use client" --> And it renders others children using the children prop --> Doesnot mean all children will be client rendered, It can be server-rendered also as long as "children" prop is used to render them.
@@ -301,7 +305,20 @@ NOTE: ** Important JS/React Things to Remember **
         -- users can create different workspaces and he can only view those workspace which he created.
         -- JoinCode is randomly generated, instead of hardCodded.
 
+## Workspace sidebar Component: 
+    -- new shadcn component added -> resizable. [provides resizable containers]
+    -- channel Sidebar is added in app/workspace/[id]/layout.ts
+    -- New component under app/workspace/[id]/workspaceSideBar.tsx
+        -- New Query file --> under convex/members.ts.
+        -- handle api:
+            1. fetch the current member details based on loggedin UserId and WorkspaceId.
+        -- New Members folder added -> under src/feature/members.
+            -- new api folder --> use hook to handle the above fetch current member details.
+    -- We need to handle the member and workspace calls and handle the fallback and loading screen accordingly.
+    -- New shadcn component --> tooltip, new file created --> src/components/hint.tsx
+        
+
 MileStone_2:
     -- Now we are able to create a New Workspace and Land to that Workspace Route.
     -- Created the toolbar/navbar and sidebar UI. 
-    -- Diffenet users with can create and view their own workspaces. 
+    -- Diffenet users with can create and view their own workspaces.

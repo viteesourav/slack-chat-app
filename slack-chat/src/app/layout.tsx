@@ -19,7 +19,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Slack Chat",
+  title: "Slack Couch",
   description: "Slack Chat App is a community based messaging application",
 };
 
