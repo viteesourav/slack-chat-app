@@ -316,6 +316,17 @@ NOTE: ** Important JS/React Things to Remember **
             -- new api folder --> use hook to handle the above fetch current member details.
     -- We need to handle the member and workspace calls and handle the fallback and loading screen accordingly.
     -- New shadcn component --> tooltip, new file created --> src/components/hint.tsx
+
+NOTE: 
+    -- "Jotai" --> the package that we use to maintain the state of Create-Workflow modal State throughout application.
+    -- This needs proper Initialization in a next.js env.
+    -- Added a new file under --> src/components/jotai-provider.tsx
+    -- In src/app/layout.tsx i.e the main Layout --> Wrap the Children inside the JotaiProvider.
+
+## Channel-sidebar Preferences:
+    -- 
+    
+## Channel-sidebar Add new members:
         
 
 MileStone_2:
