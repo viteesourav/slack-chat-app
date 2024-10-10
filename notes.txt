@@ -323,9 +323,41 @@ NOTE:
     -- Added a new file under --> src/components/jotai-provider.tsx
     -- In src/app/layout.tsx i.e the main Layout --> Wrap the Children inside the JotaiProvider.
 
-## Channel-sidebar Preferences:
-    -- 
+## Channel-sidebar Preferences: - src/app/workspace/[id]/preferences-modal.tsx
+    -- Why ?
+       --> Provides user Option with Renaming Workspace Or Remove Workspace --> Manage the Workspaces.
+    -- preferences-modal.tsx --> New file added under src/app/workspace/[id]/preferences-modal.tsx.
+    -- This will be included in the workspace-header.
+    -- new update Workspace API [** handles updating workspace metaData i.e workspace preferences **]
+    -- new remove workspace API.
+        NOTE: When we remove a workspace --> all related entries and members associated with that workspace in members table --> must be removed.
+    -- Remove Workspace..
+        --> Ask User For Confirmation before deleting the workspace. --> customHook --> src/app/hooks/useUserConfirmation.tsx
+            -- This is a generic Confirmation Modal custom-hook.
+            -- Allows user to pass custom-message and Confirmation Title, and returns Promise based on user's selection.
+            -- Ref: preferences-modal.tsx --> confirmation before deleting a workspace.
+        --> once deleted Successfully, Dont keep the user on the same workspace, Re-direct him to '/' route. --> this will load the app/page.tsx --> Which loads the first active workspace under the current LoggedInUser.
     
+** Issue:
+    - Say we are working with Dialoges and 
+    - In my parent Component am maintaining a state that tracks the opening and closing of the dialoge.
+    - Now I have another component that Where I used the dialogue and acception the states from parents as props.
+    Problem:
+        - the dialogue will open fine, On click on the Dialoge Trigger btn.
+        - But when the dialogue will close, This is removing all the btns and click events from the Page.
+        - then we need to reload the whole page, In order to click on the Dialoge Trigger btn again.
+    
+    Possible WorkAround: Ref: workspace-header.tsx [parent] --> preferences-modal.tsx[child that has Dialoge]
+        - onOpenChange --> Pass a function that close the Modal, as well as reload the current page.
+        - Drawback --> Very Costly Operation, The whole page is refreshed. ** Worst **
+
+NOTE:
+    -- While working with Dialog from shadcn, use asChild attribute when you have big code inside the Trigger or content or footer.
+    -- this prevents hyderation issues.
+    -- Very unique way of handling User-confirmation Modal using promises. [Ref: use-user-confirm.tsx]  **IMP**
+
+--> workspace Admin can successfuly edit or remove the current workspace using Prefernces dropDown Option.
+
 ## Channel-sidebar Add new members:
         
 
@@ -333,3 +365,4 @@ MileStone_2:
     -- Now we are able to create a New Workspace and Land to that Workspace Route.
     -- Created the toolbar/navbar and sidebar UI. 
     -- Diffenet users with can create and view their own workspaces.
+    -- workspace Admin can update workspace name or Remove the current workspace.

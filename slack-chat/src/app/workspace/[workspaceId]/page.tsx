@@ -1,7 +1,9 @@
+'use client';
+
 const WorkSpaceIdPage = () => {
     return (
         <div>
-           Workspace Page 
+           Workspace Page
         </div>
     )
 }

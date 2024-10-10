@@ -107,3 +107,88 @@ export const getById = query({
         return await ctx.db.get(args.id); //Fetch Workspace details based on the workspaceId.
     }
 })
+
+
+//Handles updating workspace meta-data i.e from preferences..
+export const updateWorkspace = mutation({
+    args: {
+        id: v.id('workSpaces'),
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            throw new Error("Unauthorized");
+        }
+
+        //Check if the current user and workspace Id is present in the members table..
+        const member = await ctx.db
+            .query('members')
+            .withIndex('by_user_id_workspace_id', q => (
+                q.eq('userId',userId).eq('workspaceId', args.id) 
+            ))
+            .unique();
+
+        //If no such members found or the member found who is not 'admin' --> return null...   
+        if(!member || member.role !== 'admin') {
+            throw new Error('Unauthorized');
+        }
+
+        //update the workspace details... --> updates the name of the workspace..
+        await ctx.db.patch(args.id, {
+            name: args.name
+        })
+
+        return args.id;  //return back the workspaceId..
+    }
+})
+
+
+//Handles removing workspace i.e  from preferences..
+export const deleteWorkspace = mutation({
+    args: {
+        id: v.id('workSpaces')
+    },
+    handler: async (ctx, args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            throw new Error("Unauthorized");
+        }
+
+        //Check if the current user and workspace Id is present in the members table..
+        const member = await ctx.db
+            .query('members')
+            .withIndex('by_user_id_workspace_id', q => (
+                q.eq('userId',userId).eq('workspaceId', args.id) 
+            ))
+            .unique();
+
+        //If no such members found or the member found who is not 'admin' --> return null...   
+        if(!member || member.role !== 'admin') {
+            throw new Error('Unauthorized');
+        }
+        
+        //When a workspace is deleted --> all members associated with that worksapce also needs to go..
+        const[members] = await Promise.all([
+            ctx.db.query('members')
+                .withIndex('by_workspace_id', q => q.eq('workspaceId', args.id))
+                .collect(),
+        ]);
+        
+        //iterate the members list and remove them from the 'members' table.
+        for(const member of members) {
+            await ctx.db.delete(member._id);
+        }
+
+
+        //now remove the workspace...
+        await ctx.db.delete(args.id);
+
+
+        return args.id;  //return back the workspaceId..
+    }
+})
