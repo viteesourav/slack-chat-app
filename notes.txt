@@ -354,7 +354,16 @@ NOTE:
 NOTE:
     -- While working with Dialog from shadcn, use asChild attribute when you have big code inside the Trigger or content or footer.
     -- this prevents hyderation issues.
+    
+*** How to handle custom user Confirmation Hook *** [ VIMP ]    
     -- Very unique way of handling User-confirmation Modal using promises. [Ref: use-user-confirm.tsx]  **IMP**
+       --> basically have a promise or null as state.
+       --> one confirm should initialize the promise in the state, and cancel should make state null.
+       --> Based on state is null or not --> show the confirmation Modal.
+       --> If Cancel --> Make the promise in the state as resolved --> with false, if confrim --> resolve it with true.
+       --> Reset the state to null --> this closes the confirmation popup.
+       --> retrun The ConfrimationPop component and confirm method. 
+       --> In Parent, confirm method opens the popup --> wait for the user to confrim/cancel --> i.e once resolved --> Either will true/false --> based on this, Operation can be handled in Parent.
 
 --> workspace Admin can successfuly edit or remove the current workspace using Prefernces dropDown Option.
 
