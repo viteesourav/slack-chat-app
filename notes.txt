@@ -367,11 +367,54 @@ NOTE:
 
 --> workspace Admin can successfuly edit or remove the current workspace using Prefernces dropDown Option.
 
-## Channel-sidebar Add new members:
-        
+## Channel-sidebar Show and Add new members:
+    -- new SideItem Component Added --> contains ButtonLink with custom Variant --> Navigates to Channel id.
+    -- Creating Channels
+       -> New Schema Created --> channels --> Holds name, id [workspaceId] 
+       -> also new index added to query by workspaceId.
+    Rules: Everytime, we create a Workspace -> We must have atleast 1 Channel. --> Create a new Channel when we create a new workspace. -> Ref: createWorkspace method under convex/workspace.ts 
+    -- Now channel function is ready --> create the hook to fetch those values.
+       -> New file For Channels --> src/features/channels/api --> useGetChannels.ts [new hook]
+
+    -- Wrap the Whole channel part inside it's workspaceSection --> To Seperate it from Other sidebarItems.
+    -- It should show a Plus Icon to Add New channels with a hover Text.
+    -- Also It should either hide or show all the Channels.
+    -- New Package Added -> react-use  --> gives us a bunch of useful hooks --> WE will use useToggle hook.
+    -- New Function Added -> under convex/members.ts --> fetch all the members for that workspace.
+    -- Intergated in workspace-sidebar with workspace-section and user-Item component.
+
+
+
+NOTE:
+    -- Lucide Icons can be passed as Props to Child component. Ref: In workspace-sidebar component, we are passing "MessageSquareText" Licude Icon as Icon Prop.
+        -> In the child comp, You must define the type as LucideIcon OR IconType -> from react-icon/lib.
+        -> Also, As you destructure the Props, make sure to Map it to a variable with Caps to use as Component. Ref: sidebar-item.tsx
+    -- "asChild" Property example. 
+        --> If a button holds a link, And button you mark asChild. --> the button will behave like a Link.
+        --> Prevents hyderation errors.
+    -- using Link from next/Link --> Navigates to a particular URL. takes href.
+    -- while using convex functions. Ref: convex/channels.ts
+        -> after you write the query and withindex Chain. --> use collect() or unique() depending upon if the query will return multiple or unique rows.
+    -- ml-auto or anything ml/mr/mt/mb-auto --> Will take all the space available on that respective side.
+    -- opacity-0 or opacity-100 on hover can be used to handle the visibility.
+    -- While Destructuring Obj, you can give default value to any key like eg: cosnt {key1, key2 = "myDefaultVal" } = Obj;  [** IMP **]
+[** IMP **]
+    -- Working with convex Functions: Ref: convex/members.ts
+        -> If Your fucntion returns array of data --> Check case if resp is null --> return [];
+        -> If your function returns a unique data or ID --> check case if resp is null -> return null;
+    -- Handling Multiple Tables with convex functions. [convex/members.ts/get method]
+        -> Querying members table, based on userId --> I want to fetch the details from the user tables.
+        -> This takes the ctx and the id --> using the id, it will fetch the details from the respective table.
+
+Note: [on shadcn]
+    -- We can create our own variant for button using "cva" instead of multiple if-else.. Ref: sidebar-item.tsx 
+    -- import { cva, type VariantProps } from 'class-variance-authority'; --> You can see they have done the same in button.tsx under components/ui.
+    -- Cleaner way of defining mutiple styles for button.      
+
 
 MileStone_2:
     -- Now we are able to create a New Workspace and Land to that Workspace Route.
     -- Created the toolbar/navbar and sidebar UI. 
     -- Diffenet users with can create and view their own workspaces.
     -- workspace Admin can update workspace name or Remove the current workspace.
+    -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
