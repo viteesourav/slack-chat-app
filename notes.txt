@@ -367,6 +367,7 @@ NOTE:
 
 --> workspace Admin can successfuly edit or remove the current workspace using Prefernces dropDown Option.
 
+TODO: [12 Oct 2024]
 ## Channel-sidebar Show and Add new members:
     -- new SideItem Component Added --> contains ButtonLink with custom Variant --> Navigates to Channel id.
     -- Creating Channels
@@ -384,6 +385,29 @@ NOTE:
     -- Intergated in workspace-sidebar with workspace-section and user-Item component.
 
 
+## Implentation of Add functionality for Channels and Members in sideBar. -- TODO
+    -- What is Channel ?
+        --> A table in backend that stores name of the channel and Workspace.
+        --> So basically a user [only Admin] can create multiple channels and Add multiple members to that channel ?
+    -- Created a Jotai --> global toggel For Add channel modal. ref: src/feature/channel/store/use-create-channal-modal.tsx.
+    -- Create the Add Channel Modal --> under feature/channel/component/create-channel-modal.tsx.
+    -- Since we managing all our modal at one place.
+        -> will Add the new Modal to modal.tsx file under -> src/components/modal.tsx
+    -- feature/Rule for new Channel Name:
+        -> All words should be in one go i.e no spaces, if spaces convert them to '-'
+    -- Craete a api end-point i.e convex function and use-create-channel hook -> Need to be created.
+
+Thus, Able to Add new channels and list them under the side-bar. 
+    
+
+
+
+
+
+
+
+
+
 
 NOTE:
     -- Lucide Icons can be passed as Props to Child component. Ref: In workspace-sidebar component, we are passing "MessageSquareText" Licude Icon as Icon Prop.
@@ -398,6 +422,15 @@ NOTE:
     -- ml-auto or anything ml/mr/mt/mb-auto --> Will take all the space available on that respective side.
     -- opacity-0 or opacity-100 on hover can be used to handle the visibility.
     -- While Destructuring Obj, you can give default value to any key like eg: cosnt {key1, key2 = "myDefaultVal" } = Obj;  [** IMP **]
+    -- Working with implementing hooks. [** VIMP **]
+        -> Any hooks implementation must be the first thing in any component body.
+        -> Ex: In workspace-sidebar.tsx, if i put the useCreateWorkspace hook at the last, It will throw error.
+          1. It's better to put such kind of state or any hooks at the top.
+          2. then write all the hooks used for api call and data fetching.
+          3. then write the logic or data manipulation.
+          4. then return the body of the Component. 
+    -- 
+
 [** IMP **]
     -- Working with convex Functions: Ref: convex/members.ts
         -> If Your fucntion returns array of data --> Check case if resp is null --> return [];
@@ -410,6 +443,9 @@ Note: [on shadcn]
     -- We can create our own variant for button using "cva" instead of multiple if-else.. Ref: sidebar-item.tsx 
     -- import { cva, type VariantProps } from 'class-variance-authority'; --> You can see they have done the same in button.tsx under components/ui.
     -- Cleaner way of defining mutiple styles for button.      
+
+
+
 
 
 MileStone_2:

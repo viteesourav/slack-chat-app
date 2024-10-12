@@ -29,7 +29,7 @@ export const CreateWorkspaceModal = () => {
         mutate({
             name
         },{
-            onSuccess(id) {
+            onSuccess:(id) => {
                 // console.log('##New Workspace is created:', data);
                 // router.push(`/workspace/${id}`); // using .push --> allows the use to goBack.. **Navigating but all click events are not working**
                 window.location.assign(`/workspace/${id}`); //workAround --> navigates and reload the screen.

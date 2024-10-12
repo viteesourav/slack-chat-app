@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 //Fetch function to get the channels..
@@ -33,6 +33,47 @@ export const get = query({
                                 .collect();
 
         return channels;
+
+    }
+})
+
+//Fetch function to get the channels..
+export const create = mutation({
+    args: {
+        name: v.string(),
+        workspaceId: v.id('workSpaces')
+    },
+    handler: async (ctx,args) => {
+
+        //check if the current use is present or not ? 
+        const userId = await getAuthUserId(ctx);
+
+        //since we are creating, If user not present so throw new error..
+        if(!userId) {
+            throw new Error('unAuthorized');
+        }
+
+        //Check if the guy has atleast one workspace related to him..
+        const members = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q=> q.eq('userId', userId).eq('workspaceId', args.workspaceId))
+                                .unique();
+
+        //check if members are not null and if present they, if member is not an admin.
+        if(!members || members.role !== 'admin') {
+            throw new Error('unAuthorized');
+        }
+
+        //Just a parser that finds any space in the channel name and convert them to '-'
+        const parsedName = args.name.replace(/\s+/g, '-').toLowerCase();
+
+        //insert the channel details ...
+        const channelId = await ctx.db.insert('channels', {
+            name: parsedName,
+            workspaceId:args.workspaceId
+        })
+
+        return channelId;
 
     }
 })

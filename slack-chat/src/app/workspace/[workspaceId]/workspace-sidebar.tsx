@@ -8,10 +8,12 @@ import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { WorkspaceSection } from "./workspace-section";
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import { UserItem } from "./user-item";
+import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
 
 export const WorkspaceSidebar = () => {
 
   const workspaceId = useWorkSpaceId(); //fetches the current workspaceId ...
+  const[_open, setOpen] = useCreateChannelModal(); //handles the popup visibility for CreateChannelModal...
 
   const{data: member, isLoading: memberIsLoading} = useCurrentMember({ id:workspaceId });  //fetches current member details..  
   const{data: currWorkspace, isLoading: currWorkspaceIsLoading} = useGetByIdWorkspace({id:workspaceId});
@@ -67,10 +69,11 @@ export const WorkspaceSidebar = () => {
         />
       </div>
       {/* Render the channels for the current Workspace... */}
+      {/* NOTE: Add privileges are only For the Admin users. */}
       <WorkspaceSection
         label="Channels"
         hint="New Channel"
-        onNew={()=>{}}
+        onNew={member.role === 'admin' ? () => setOpen(true) : undefined}
       >
         {
           channels?.map(item => (

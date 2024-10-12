@@ -42,6 +42,7 @@ export const WorkspaceSection = ({
             <Button variant='transparent' size='sm' className="group px-1.5 text-sm text-[#f9edffcc] h-[28px] justify-start overflow-hidden items-center">
                 <span className="truncate">{label}</span>
             </Button>
+            {/* Here, If onNew is Undefined i.e in case of a non-Admin member --> then Add btn wont be there.. | Only for admin users */}
             {
                 onNew && (
                     <Hint
