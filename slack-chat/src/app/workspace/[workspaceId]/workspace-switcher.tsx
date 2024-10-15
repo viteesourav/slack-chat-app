@@ -20,7 +20,7 @@ export const WorkspaceSwitcher = () => {
     const filteredWorkspaces = allWorkspaceData?.filter(workspace => workspace._id !== workspaceId);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
         <DropdownMenuTrigger>
             <div className="size-9 relative overflow-hidden bg-[#ABABAD] hover:bg-[#ABABAD]/80 text-slate-800 font-semibold text-xl rounded-sm cursor-pointer flex justify-center items-center">
                 {currWorkspaceIsLoading ? (

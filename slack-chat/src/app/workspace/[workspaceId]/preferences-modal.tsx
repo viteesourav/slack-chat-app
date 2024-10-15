@@ -49,12 +49,6 @@ export const PreferencesModal = ({
     const{mutate: updateWorkspace, isPending: updateWorkspaceIsPending} = useUpdateWorkspace();
     const{mutate: removeWorkspace, isPending:removeWorkspaceIsPending} = useRemoveWorkspace();
 
-    //method, handles closing the Modal and refreshing the worksapce...
-    const closeAndReloadWorkspace = () => {
-        closeModal(false);
-        window.location.reload();
-   } 
-
    //Handles the update workspace name..
    const handleEdit = (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
@@ -101,7 +95,7 @@ export const PreferencesModal = ({
         {/* Renders the user-confirmation-dialog */}
         <ConfirmDialog />
         {/* Handles the user-preference Dialog component */}
-        <Dialog open={open} onOpenChange={closeAndReloadWorkspace}>
+        <Dialog open={open} onOpenChange={closeModal}>
             <DialogContent className="p-0 bg-gray-50 overflow-hidden">
                 <DialogHeader className="p-4 border-b bg-white">
                     <DialogTitle>

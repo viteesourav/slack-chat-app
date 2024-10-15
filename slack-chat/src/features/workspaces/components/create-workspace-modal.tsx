@@ -31,8 +31,14 @@ export const CreateWorkspaceModal = () => {
         },{
             onSuccess:(id) => {
                 // console.log('##New Workspace is created:', data);
-                // router.push(`/workspace/${id}`); // using .push --> allows the use to goBack.. **Navigating but all click events are not working**
-                window.location.assign(`/workspace/${id}`); //workAround --> navigates and reload the screen.
+                /*
+                    Problem: using .push --> allows the use to goBack.. **Navigating but all click events are not working** 
+                    Workaround Soln --> 
+                   // don't use router.push, rather use window.location.assign(`/workspace/${id}`) --> navigates and reload the screen.
+                    Real Problem -> We were using dropDown + Dialog from shadcn --> Once Dialog closes the Click events were removed.
+                    Solution --> In the Dropdown menu --> add a property called "modal" as false.
+                */
+                router.push(`/workspace/${id}`);
                 handleCloseModal(); //close the create-workspace-modal..
                 toast.success('Workspace Created successfully');
             }

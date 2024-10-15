@@ -246,7 +246,7 @@ TODO: [5th Oct 2024]
             - Allows user to view his active workspace, along with other worspaces. [NOTE: all workspaces will show here.]
             - Allows him to navigate to a particular workspace.
 
-** Issue: 
+** Issue: [Fixed]
     -- When we create a new Workspace --> it's redirecting to the new workspace -> but the click events on the entire page is not working.
     -- It is Woking when, we force reload the page.
     -- Problem: In create-workspace-modal.tsx file,
@@ -255,6 +255,10 @@ TODO: [5th Oct 2024]
         --> no Error on the console.
     -- WorkAround,
         --> Instead of using router.push --> use window.location.assign() --> Navigates and reload the whole page. [** costly operation **]
+
+    -- sol:
+        -> If you using a dropdown + dialog --> Where you create the new workspace --> In DropdownMenu add propery modal={false}.
+        -> should solve the events disabled issue.
 
     3. Sidebar buttons:
         -- created --> /workspace/[workspaceId]/sidebar-button.tsx.
@@ -338,7 +342,7 @@ NOTE:
             -- Ref: preferences-modal.tsx --> confirmation before deleting a workspace.
         --> once deleted Successfully, Dont keep the user on the same workspace, Re-direct him to '/' route. --> this will load the app/page.tsx --> Which loads the first active workspace under the current LoggedInUser.
     
-** Issue:
+** Issue: [fixed]
     - Say we are working with Dialoges and 
     - In my parent Component am maintaining a state that tracks the opening and closing of the dialoge.
     - Now I have another component that Where I used the dialogue and acception the states from parents as props.
@@ -350,6 +354,10 @@ NOTE:
     Possible WorkAround: Ref: workspace-header.tsx [parent] --> preferences-modal.tsx[child that has Dialoge]
         - onOpenChange --> Pass a function that close the Modal, as well as reload the current page.
         - Drawback --> Very Costly Operation, The whole page is refreshed. ** Worst **
+    
+    ** Solution Found: 
+        -> Problem was with dropDown + Dialog box implementation.
+        -> Solution: In DropdownMenu --> add a property of 'modal' as 'false'.
 
 NOTE:
     -- While working with Dialog from shadcn, use asChild attribute when you have big code inside the Trigger or content or footer.
@@ -385,10 +393,10 @@ TODO: [12 Oct 2024]
     -- Intergated in workspace-sidebar with workspace-section and user-Item component.
 
 
-## Implentation of Add functionality for Channels and Members in sideBar. -- TODO
-    -- What is Channel ?
-        --> A table in backend that stores name of the channel and Workspace.
-        --> So basically a user [only Admin] can create multiple channels and Add multiple members to that channel ?
+## Implentation of Add functionality for Channels and Members in sideBar.
+-- What is Channel ?
+    --> A table in backend that stores name of the channel and Workspace.
+    --> So basically a user [only Admin] can create multiple channels and Add multiple members to that channel ?
     -- Created a Jotai --> global toggel For Add channel modal. ref: src/feature/channel/store/use-create-channal-modal.tsx.
     -- Create the Add Channel Modal --> under feature/channel/component/create-channel-modal.tsx.
     -- Since we managing all our modal at one place.
@@ -398,8 +406,20 @@ TODO: [12 Oct 2024]
     -- Craete a api end-point i.e convex function and use-create-channel hook -> Need to be created.
 
 Thus, Able to Add new channels and list them under the side-bar. 
-    
 
+
+** Issue:  [fixed]
+    -- SO the issue, Of Dialog box after closing, all the events are going away on the page. 
+    -- It is not a problem with dialog box, It's a problem with the dropDown menu from shadcn.
+    -- When using dropdown --> It opens the dialog box --> After the dialog box closes --> All events in that page is gone.
+    -- It is happening whereever am using dropdownMenu + dialog from shadcn.
+--> Github Issue Link: [https://github.com/shadcn-ui/ui/issues/468]
+
+Finally: Solution: 
+    --> In Dropdown menu --> Add a property of modal as 'false' If you are using DropDown Menu and on menu Click Opening a Modal.
+    
+-- Invite new Members Modal: [OnClick -> Invite members to current Project in sidebar]
+    -- 
 
 
 
