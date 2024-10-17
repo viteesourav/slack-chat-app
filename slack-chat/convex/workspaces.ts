@@ -198,3 +198,38 @@ export const deleteWorkspace = mutation({
         return args.id;  //return back the workspaceId..
     }
 })
+
+//Method updates the existing Workspace, Info with a new Join Code...
+export const newJoinCode = mutation({
+    args: {
+        workspaceId: v.id('workSpaces')
+    },
+    handler: async (ctx, args) => {
+        const userId = await getAuthUserId(ctx);  //get the current LoggedIn user...
+
+        if(!userId) {
+            throw new Error("Unauthorized");
+        }
+
+         //Check if the current user and workspace Id is present in the members table..
+         const member = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q => (
+                                    q.eq('userId',userId).eq('workspaceId', args.workspaceId) 
+                                ))
+                                .unique();
+
+        //If no such members found, return no-workspace-details i.e null.    
+        if(!member) {
+            throw new Error('Unauthorized');
+        }
+
+        const joinCode = generateCode();
+
+        await ctx.db.patch(args.workspaceId, {
+            joinCode
+        });
+
+        return args.workspaceId;
+    }
+})

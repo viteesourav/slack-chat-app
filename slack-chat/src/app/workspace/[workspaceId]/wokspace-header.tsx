@@ -19,7 +19,7 @@ export const WorkspaceHeader = ({workspace, isAdmin}:WorkspaceHeaderProps) => {
 
     return (
         <>
-            <InviteModal open={isOpenInviteModal} closeModal={setIsOpenInviteModal} />
+            <InviteModal open={isOpenInviteModal} closeModal={setIsOpenInviteModal} data={workspace} />
             <PreferencesModal open={isOpenPreferenceModal} closeModal={setIsOpenPreferenceModal} defaultName={workspace.name} />
             <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
                 {/* This fix the issue with Dropdown+Dialog issue i.e when dialog closes -> Page becomes inactive */}

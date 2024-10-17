@@ -36,7 +36,7 @@ export const CreateWorkspaceModal = () => {
                     Workaround Soln --> 
                    // don't use router.push, rather use window.location.assign(`/workspace/${id}`) --> navigates and reload the screen.
                     Real Problem -> We were using dropDown + Dialog from shadcn --> Once Dialog closes the Click events were removed.
-                    Solution --> In the Dropdown menu --> add a property called "modal" as false.
+                    Solution --> In the Dropdown menu --> add a property called "modal" as false. Ref -> workspace-switcher.tsx [holds the dropDown from where this modal will be triggered]
                 */
                 router.push(`/workspace/${id}`);
                 handleCloseModal(); //close the create-workspace-modal..

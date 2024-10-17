@@ -418,8 +418,10 @@ Thus, Able to Add new channels and list them under the side-bar.
 Finally: Solution: 
     --> In Dropdown menu --> Add a property of modal as 'false' If you are using DropDown Menu and on menu Click Opening a Modal.
     
+[17th Oct 2024]    
 -- Invite new Members Modal: [OnClick -> Invite members to current Project in sidebar]
-    -- 
+    -- User Should be able to see a modal Window, With a Workspace Join Code and Copy the link to Join the Workspace.
+    -- User should be able to reset the Join Code. [workspace.ts --> newJoinCode method] --> New hook created --> Used In invite-modal.ts
 
 
 

@@ -62,7 +62,7 @@ export const WorkspaceSidebar = () => {
           variant='default'
         />
          <SidebarItem
-          label="Drafts $ Sent"
+          label="Drafts & Sent"
           icon={SendHorizonal}
           id="drafts"
           variant='default'
