@@ -419,11 +419,33 @@ Finally: Solution:
     --> In Dropdown menu --> Add a property of modal as 'false' If you are using DropDown Menu and on menu Click Opening a Modal.
     
 [17th Oct 2024]    
--- Invite new Members Modal: [OnClick -> Invite members to current Project in sidebar]
+## Invite new Members Modal: [OnClick -> Invite members to current Project in sidebar]
     -- User Should be able to see a modal Window, With a Workspace Join Code and Copy the link to Join the Workspace.
     -- User should be able to reset the Join Code. [workspace.ts --> newJoinCode method] --> New hook created --> Used In invite-modal.ts
 
+## Join Workspace Screen [New Members can join through this page]
+    -- Changes in the workspace.ts --> New Mutation called join --> takes JoinCode and WorkspaceId as args.
+        -> checks if the curr user is loggedin.
+        -> Checks if the specified worksapce exists.
+        -> checks if the joinCode passed in param belongs to given workspace.
+        -> Check is the loggedIn user already is an existing member of this workspace.
+    If all Conditions agrees, Create a new Entry in the members table for the current loggedin User and workspaceId in member table. 
+    -- Create a new custom hook --> use-join.ts --> calls the join Convex server function from the workspace.ts.
 
+[** NOTE: This is how we create new dynamic Routes in Next Framework **]
+    -- New Folder to handle the join Routes  --> under src/app/join --> [workspaceId] a dynamic folder --> page.tsx [** This is how we create new Routes in Next Framework **]
+        -- Make sure the case and spelling of the dynamic Route is correct. Else useWorkspaceId.ts custom hook wont be able to pick that Id from url with useParams.
+        -- Also Page.tsx must be default export.
+    -- For Logo and any image --> We store it in public Folder outisde the src folder.
+    -- We want a verification Input Box For user to type the code. [** New Package Added --> react-verification-input]
+    -- If the current Loggedin user is already a member of the Workspace --> redirect him to his workspace 
+
+Conclusion: 
+    -> Login With Account1 --> Go to a Workspace --> Select Invite Members --> Copy the code and url --> logout.
+       NOTE: If you try to paste the copied url --> You will be redirected back to home screen [since you are already a member of the workspace]
+    -> Now -> Login with Account2 --> Paste the copied url --> Paste the Code --> Now user of Account2 have access ot Account1's Workspace. [as a member].
+
+ 
 
 
 
@@ -451,7 +473,8 @@ NOTE:
           2. then write all the hooks used for api call and data fetching.
           3. then write the logic or data manipulation.
           4. then return the body of the Component. 
-    -- 
+    -- For Logos and Pictures, Use Image from next/Image --> Optimise the Image
+    -- Other than using useParams hook to Get the path param, You can define an interface for the component and inside it use param object with the path paramId, to fetch the param details. Ref: src/join/page.tsx
 
 [** IMP **]
     -- Working with convex Functions: Ref: convex/members.ts

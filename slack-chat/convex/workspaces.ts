@@ -84,6 +84,36 @@ export const createWorkspace = mutation({
     }
 });
 
+//Method to fetch basic Info of the workspace --> Only basic details we will fetch..
+export const getInfoById = query({
+    args: {
+        id: v.id("workSpaces")
+    },
+    handler: async (ctx, args) => {
+
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            return null;
+        }
+
+        const member = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q => (
+                                    q.eq('userId',userId).eq('workspaceId', args.id) 
+                                ))
+                                .unique();
+
+
+        const workspace =  await ctx.db.get(args.id); //Fetch Workspace details based on the workspaceId.
+
+        //returns the name of the workspace, and if current user is a member of that workspace or not !!
+        return {
+            name: workspace?.name,
+            isMember: !!member
+        }
+    }
+})
+
 //Method to fetch WorkSpace Details by loggedIn User...
 export const getById = query({
     args: {
@@ -231,5 +261,54 @@ export const newJoinCode = mutation({
         });
 
         return args.workspaceId;
+    }
+})
+
+//method that joins the current loggedIn User to Member table.. i.e Member join fuction
+export const joinWorkspace = mutation({
+    args:{
+        workspaceId: v.id('workSpaces'),
+        joinCode: v.string()
+    },
+    handler: async(ctx, args) => {
+
+        //check if the LoggedIn User is authenticated..
+        const userId = await getAuthUserId(ctx);
+
+        if(!userId) {
+            throw new Error('unAuthorized');
+        }
+
+        //check if the current Workspace Exists...
+        const workspace = await ctx.db.get(args.workspaceId);
+
+        if(!workspace) {
+            throw new Error('Workspace Not Found');
+        }
+
+        //check if the workspace has the same JoinCode as that is passed...
+        if(workspace.joinCode.toLowerCase() !== args.joinCode.toLowerCase()) {
+            throw new Error('Invalid Join Code');
+        }
+
+        //Check if the current user is already a member of this workspace...
+        const member = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q => (
+                                    q.eq('userId',userId).eq('workspaceId', args.workspaceId) 
+                                ))
+                                .unique();
+        if(member) {
+            throw new Error('Already a Member of the workspace');
+        }
+
+        //finally, create a new member if the current loggedin User is not a member...
+        await ctx.db.insert('members', {
+            userId,
+            workspaceId: args.workspaceId,
+            role:'member'
+        });
+
+        return workspace._id;
     }
 })
