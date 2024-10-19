@@ -445,10 +445,27 @@ Conclusion:
        NOTE: If you try to paste the copied url --> You will be redirected back to home screen [since you are already a member of the workspace]
     -> Now -> Login with Account2 --> Paste the copied url --> Paste the Code --> Now user of Account2 have access ot Account1's Workspace. [as a member].
 
- 
 
+[19th Oct 2024]  
+## Channel page and Channel Header
+    -- When any user Visit a workspace --> atleast 1 channel or the default General Channel must be active & One Member must be selected.
+    -- Cretaed a new custom hook unnder src/hooks --> use-channel-id.ts --> extract the channelId form the params.
+    -- new Route --> under src/app/workspace/[workspaceId]/channel/[channelId]/page.tsx
+        NOTE: since channel's page.tsx is inside workspace/[workspaceId] --> It shares all it's layout --> Thus Saves from unnecessary re-renders.
+    -- Modify the workspace/[workspaceId]/page.tsx
+        --> It checks for the channels and workspaceData --> and accordingly handles the naviagtion to that workspace or open a new Channel Creating Popup.
+    Now, 
+        If you go to a workspace with no Channels --> It will prompt to add a new channel --> Once Created --> It will naviagte to that channel Landing page..
+        And the Active channel must be highlighted.
+        And If we create a new workspace --> It should automatically naviagte to the new Channel workspace --> also Highlight the same in the side-bar.
 
-
+    BugFix:
+        --> You Go to a workspace --> Where you are not an Admin and also it doesnot have any Channels.
+        --> There, You will stuck with the Add New Channel Screen --> as You are not the admin, You wont be able to create any channel, also No Channels, it will keep on Showing the create channel popup.
+        Sol:
+            -> In Page.tsx of workspace/[workspaceId] --> Get the member details using hook --> Check if it's Admin.
+            -> Open the create Channel Popup only if it's an Admin.
+            -> If not show a error saying, Channel Not found.
 
 
 
@@ -499,3 +516,4 @@ MileStone_2:
     -- Diffenet users with can create and view their own workspaces.
     -- workspace Admin can update workspace name or Remove the current workspace.
     -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
+    -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 

@@ -6,10 +6,12 @@ import React, { useState } from "react";
 import { useWorkSpaceId } from "@/hooks/use-workspace-id";
 import { useCreateChannel } from "../api/use-create-channel";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 //This handles the Modal View for Adding new channel ...
 export const CreateChannelModal = () => {
 
+    const router = useRouter(); //Helps naviagting...
     const workspaceId = useWorkSpaceId();
     const [open, setOpen] = useCreateChannelModal();  //Form Jotai store for channel --> handles popup visibility... 
     const [channelName, setChannelName] = useState(''); //tracks the channel-name input binder..
@@ -34,10 +36,14 @@ export const CreateChannelModal = () => {
             name:channelName,
             workspaceId
         },{
-            onSuccess:(id) => {
+            onSuccess:(channelId) => {
                 //TODO: --> Redirect to the new Channel URL..
                 handleCloseModal(); //close the create-workspace-modal..
-                toast.success('Workspace Created successfully');
+                router.push(`/workspace/${workspaceId}/channel/${channelId}`);  //naviagtes to the newly created channel
+                toast.success('Channel Created successfully');
+            },
+            onError: () => {
+                toast.error('Failed to Create a Channel');
             }
         })
 

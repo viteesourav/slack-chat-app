@@ -5,6 +5,7 @@ import { UserButton } from '@/features/auth/components/user-button';
 import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces';
 import { useCreateWorkspaceModal } from '@/features/workspaces/store/use-create-workspace-modal';
 import { useRouter } from 'next/navigation';
+import { Loader } from 'lucide-react';
 
 export default function Home() {
 
@@ -30,10 +31,10 @@ export default function Home() {
     }
   }, [workspaceId, isLoading, open, setOpen]);
 
+  // Just show a loader in the center of the page...
   return (
-    <div>
-      This is App Landing Page
-      <UserButton />
+    <div className='h-full flex justify-center items-center'>
+      <Loader className='size-10 animate-spin text-muted-foreground' />
     </div>
   );
 }
