@@ -35,7 +35,7 @@ const WorkSpaceIdPage = () => {
    const channelId = useMemo(()=>channelData?.[0]?._id, [channelData]);
    const isAdmin = useMemo(() => currMember?.role === 'admin', [currMember?.role]);
 
-
+   
    //This Handles the naviagtion to the first channel if it finds --> If not -> Opens the create New channel Modal.
    //NOTE: We are dealing with a lot of state dependent variable inside useEffect here --> added them in the dependency arr.
    useEffect(()=>{
@@ -78,20 +78,24 @@ const WorkSpaceIdPage = () => {
         )
     }
 
+    if(!isAdmin) {
+        return (
+            <div className="h-full flex-1 flex justify-center items-center flex-col gap-2">
+                <TriangleAlert className="size-8 text-rose-500" />
+                <span className="text-sm text-muted-foreground">Channel not found Or Not Selected</span>
+            </div>
+        )
+    }
+
     /*
         At this point, we have handled most of the cases.
             1. If the channelId exisit --> It will got to the respective channel Page.
             2. If the channel and workspace data loading --> show a loading icon
             3. If the workspace doesnt exist --> Show an error message saying workspace doesnt exist
+            4. If the current member is not an Admin and he has no other channel in that workspace -> Show a proper error message.
     */
    
-    // If the current member is not an Admin and he has no other channel in that workspace -> Show a proper error message.
-    return (
-        <div className="h-full flex-1 flex justify-center items-center flex-col gap-2">
-            <TriangleAlert className="size-8 text-rose-500" />
-            <span className="text-sm text-muted-foreground">Channel not found</span>
-        </div>
-    );
+    return null;
 }
 
 export default WorkSpaceIdPage;
