@@ -77,3 +77,120 @@ export const create = mutation({
 
     }
 })
+
+//Fetch function to get the channels Details by channelId
+export const getById = query({
+    args: {
+        id: v.id('channels')
+    },
+    handler: async (ctx,args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            return null;
+        }
+
+        const channel = await ctx.db.get(args.id);
+
+        if(!channel) {
+            return null;
+        }
+
+        //Check if this channel's workspace and current user is a part of..
+        const members = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q=> q.eq('userId', userId).eq('workspaceId', channel.workspaceId))
+                                .unique();
+
+        
+        if(!members) {
+            return null;
+        }
+
+        return channel;
+
+    }
+})
+
+//Handles updating channel meta-data i.e from preferences..
+export const updateChannel = mutation({
+    args: {
+        id: v.id('channels'),
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            throw new Error('unAuthorized');
+        }
+
+        const channel = await ctx.db.get(args.id);
+
+        if(!channel) {
+            throw new Error('Invalid Channel');
+        }
+
+        //Check if this channel's workspace and current user is a part of..
+        const members = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q=> q.eq('userId', userId).eq('workspaceId', channel.workspaceId))
+                                .unique();
+
+        
+        if(!members) {
+            throw new Error('unAuthorized');
+        }
+
+        //update the workspace details... --> updates the name of the workspace..
+        await ctx.db.patch(args.id, {
+            name: args.name
+        })
+
+        return args.id;  //return back the workspaceId..
+    }
+})
+
+
+//Handles removing channel
+export const deleteChannel = mutation({
+    args: {
+        id: v.id('channels')
+    },
+    handler: async (ctx, args) => {
+
+        //check if the current use is present or not ?
+        const userId = await getAuthUserId(ctx);
+        if(!userId) {
+            throw new Error('unAuthorized');
+        }
+
+        const channel = await ctx.db.get(args.id);
+
+        if(!channel) {
+            throw new Error('Invalid Channel');
+        }
+
+        //Check if this channel's workspace and current user is a part of..
+        const members = await ctx.db
+                                .query('members')
+                                .withIndex('by_user_id_workspace_id', q=> q.eq('userId', userId).eq('workspaceId', channel.workspaceId))
+                                .unique();
+
+        
+        // If a non-Admin member try to delete the channel --> Should be auauthorized..
+        if(!members || members.role !== 'admin') {
+            throw new Error('unAuthorized');
+        }
+
+        //TODO: Remove associated messages with the current Channel ...
+
+        //now remove the channel...
+        await ctx.db.delete(args.id);
+
+
+        return args.id;  //return back the channelId..
+    }
+})

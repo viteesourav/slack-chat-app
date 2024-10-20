@@ -35,12 +35,17 @@ const WorkSpaceIdPage = () => {
    const channelId = useMemo(()=>channelData?.[0]?._id, [channelData]);
    const isAdmin = useMemo(() => currMember?.role === 'admin', [currMember?.role]);
 
+   console.log('##workpace', workspaceData);
+   console.log('##isAdmin', isAdmin);
+   console.log('##ChannelId', channelId);
+   
+
    
    //This Handles the naviagtion to the first channel if it finds --> If not -> Opens the create New channel Modal.
    //NOTE: We are dealing with a lot of state dependent variable inside useEffect here --> added them in the dependency arr.
    useEffect(()=>{
     //If the data is still loading...
-    if(isWorkspaceLoading || isChannelLoading || isCurrMemberLoading || !isAdmin || !workspaceData)
+    if(isWorkspaceLoading || isChannelLoading || isCurrMemberLoading || !workspaceData)
         return;
     //If you find the first channel Id for that workspace...
     if(channelId) {
@@ -60,7 +65,7 @@ const WorkSpaceIdPage = () => {
     ])
   
     //If Workpsace or Channel is loading...
-    if(isWorkspaceLoading || isChannelLoading) {
+    if(isWorkspaceLoading || isChannelLoading || isCurrMemberLoading) {
         return (
             <div className="h-full flex-1 flex justify-center items-center flex-col gap-2">
                 <Loader className="size-8 animate-spin text-muted-foreground" />
@@ -69,7 +74,7 @@ const WorkSpaceIdPage = () => {
     }
 
     //If the workspace itself doesnot exist. case -> If we are a member and workspace got deleted..
-    if(!workspaceData) {
+    if(!workspaceData || !currMember) {
         return (
             <div className="h-full flex-1 flex justify-center items-center flex-col gap-2">
                 <TriangleAlert className="size-8 text-rose-500" />

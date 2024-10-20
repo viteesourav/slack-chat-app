@@ -476,11 +476,16 @@ Conclusion:
     Expectation:
         --> Ideally, It should naviagte to the first channel it is getting automatically.
     Expeected Sol:
-        --> we are in the page.tsx of channel Page. --> From there we need to handle this, If the channel gets deleted then we need to fallback to the workspace Page.
-        --> Falling backto Workspace page --> Go to the first channel that is available in the workspace.
+        --> In page.tsx of workspace/[workspaceId] --> If the current loggedIn User is not Admin
+        --> He should be re-directed to the appropiate shared channel.
+        --> If No Channel Found, and he is not an Admin --> Error Message display a No channel Found or selecteed.
 
 ## Channel Header
-    -- 
+    -- new convex function under channel.ts --> fetches the channel Details based on Id.
+    -- The user, If admin should be able to Click on the channel header --> Opens a Dialog Box --> Can Edit Channel Name and Remove the Channel.
+    -- new Methods added to handle the --> Channel Update and Channel remove [channel.ts]
+    -- new Channel-header --> under page.tsx [Channel/[channelId]] --> uses nested Dialog Box to show Edit Channel Modal and Open the Edit Channel Popup.
+
 
 
 
@@ -534,3 +539,4 @@ MileStone_2:
     -- workspace Admin can update workspace name or Remove the current workspace.
     -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
     -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
+    -- User is able to Update Channel Name and Remove Channel From Channel Header.
