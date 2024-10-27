@@ -480,15 +480,42 @@ Conclusion:
         --> He should be re-directed to the appropiate shared channel.
         --> If No Channel Found, and he is not an Admin --> Error Message display a No channel Found or selecteed.
 
-## Channel Header
+## Channel Page Header
     -- new convex function under channel.ts --> fetches the channel Details based on Id.
     -- The user, If admin should be able to Click on the channel header --> Opens a Dialog Box --> Can Edit Channel Name and Remove the Channel.
     -- new Methods added to handle the --> Channel Update and Channel remove [channel.ts]
     -- new Channel-header --> under page.tsx [Channel/[channelId]] --> uses nested Dialog Box to show Edit Channel Modal and Open the Edit Channel Popup.
 
+## Editor Component
+    -- New Component Created --> chat-input.tsx under page.tsx of channel/[channelId].
+    -- New Reusuable Component --> Editor [** under src/components --> we are going to use it at many places **]
+       NOTE: ** Default export the EDitor component **
+       Reason: We will be using dynamic Import in ChatInput component --> that's why default export is needed.
+    -- We will not Develop the Editor from Scratch.
+       - new Packages added: qill [editor package]
+       - Configure Editor with quill and dynamically add it in a div using useRef and useEffect. [ Reference: editor.tsx ]
+       - Update global.css file, for styling the editor. NOTE: all css property must be !important --> Overrides the default styles from qill package.
+       - Basically, We Overrided few of the inbuilt style classs by quill like ql-editor, ql-container etc in global.css ---> 'ql-custom' on the editor container implements these custom styles.
+       - quill doesnot support server-side rendering.
+          Solution: In chat-input.tsx --> use dynamic from next/dynamic --> dynamically load the editor.tsx [contains qill editor].
+    -- Editor component is a very re-usable component --> We can accept props and based on that --> We can add multiple Variant of the editor [For New Message/Edit Messages]
+        Variant: Create Or update.
+            -- For Update, We will not show the attach image Option.
+            -- submit button for create and [save and cancel] buttons for Edit Case.
+    -- using useRef hook heavily to avoid Screen rendering and also not have to pass dependecy to useEffect.
+    -- New React hook used: useLayoutEffect [No Dependency Array need] --> updates all the refs.
+    -- working with refs and useEffect Efficents:
+        placeholder value in Prop --> the useRef hols the value --> can directly use it in useEffect, no need to add in dependecy array.
+    -- using a mix and match of useRefs, useState and useEffect.
+       NOTE: useRefs will chnage but it will not cause any re-renders, thus we need some state control over the messages we type in the editor 
+            -> based on that we can perfrom any actions like disabling the send button or others.
+    -- In Quill, Suppose you want to press enter to 'submit' or say want to add a newline when pressed 'shift + Enter'
+        --> Modify the options in the useEffect, For Quill.
+        --> Baiscally In modules property --> We can control toolbar, keybindings etc. Reference: editor.tsx
+    --> We have kept whatever items we need in the toolbar using quill option, module property.
+    --> We have also Modified the use of "Enter" Key and "shift+Enter" Key press for the editor. --> using the quill option, module keyboard property.
 
-
-
+## WE have a working Editor with Add Message and edit Message functionality.
 
 
 
@@ -514,6 +541,29 @@ NOTE:
           4. then return the body of the Component. 
     -- For Logos and Pictures, Use Image from next/Image --> Optimise the Image
     -- Other than using useParams hook to Get the path param, You can define an interface for the component and inside it use param object with the path paramId, to fetch the param details. Ref: src/join/page.tsx
+    -- While Modifying the syles for Editor:
+        -- In Global.css --> If you want to use tailwind classes inside css, use @apply tailwind-classname
+    -- We can define types for the component Props by using 'type' keyword. --> this Object can be used inside 'interface' Component Props Object to define type for any Prop Key.
+       Reference: editor.tsx, use-workspace-create.tsx etc [using 'type' with 'interface']
+    -- If you have Optional Props, use like: CompProps { key1?: string;} --> this means key1 is optional for the Componant. By default, all props are mandatory.
+    -- Generally, useRefs are used to create dynamic contents. --> Reference: editor.tsx
+    -- Cool thing about Refs: [** VIMP **]
+        1. They dont need to be added to the depenedecy array of the useEffect hook.
+        2. If they change, It Doesnot cause the page to Reload.
+        Ref: editor.tsx --> heavily depends upon refs.
+    -- Refs can be used well with useEffect, but they cannot be used outside as they will not re-rendered if changed. [** VIMP **]
+        Sol: use state controlled like useState or the props outside useEffect. Inside useEffect you can use refs.
+    -- ESLint VSCode:
+        - Basically, any framework like Nextjs comes inbuilt with .eslintrc.json Or you can add a new file that passes your code through a linter.
+        - You can add a lot of options based on how you want your code to be linted.
+        - we added 2 property, that suppress the error of unused-var for typescript.
+    -- using regex while text matching...
+        - Has to be .replace('/#####/g, '') --> ##### should be your matcher it will look for..
+        - eg: .replace('/<(.|\n)*?>/g, '') --> This basically removes any tags like <br><div> etc..
+
+
+
+
 
 [** IMP **]
     -- Working with convex Functions: Ref: convex/members.ts
@@ -522,6 +572,7 @@ NOTE:
     -- Handling Multiple Tables with convex functions. [convex/members.ts/get method]
         -> Querying members table, based on userId --> I want to fetch the details from the user tables.
         -> This takes the ctx and the id --> using the id, it will fetch the details from the respective table.
+
 
 Note: [on shadcn]
     -- We can create our own variant for button using "cva" instead of multiple if-else.. Ref: sidebar-item.tsx 
@@ -540,3 +591,4 @@ MileStone_2:
     -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
     -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
     -- User is able to Update Channel Name and Remove Channel From Channel Header.
+    -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.
