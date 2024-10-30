@@ -11,6 +11,8 @@
     - Need 2 terminals:
         1. terminal_1 --> Runs the next application on localhost:3000 [bun run dev]
         2. terminal_2 --> Runs convex service, supports Auth and database [bunx convex dev]
+    - any package installed 
+        eg: bun add package-name 
 
 ## search with keyword "Issue:" to find potential issue with the Application.
 
@@ -515,8 +517,43 @@ Conclusion:
     --> We have kept whatever items we need in the toolbar using quill option, module property.
     --> We have also Modified the use of "Enter" Key and "shift+Enter" Key press for the editor. --> using the quill option, module keyboard property.
 
-## WE have a working Editor with Add Message and edit Message functionality.
+ WE have a working Editor with Add Message and edit Message functionality.
 
+
+TODO: [30th Oct]
+## Editor Functionalities --> Emoji Picker & Image Picker.
+    -- New Package added - @emoji-mart/react, @emoji-mart/data.
+    -- New Shadcn Component added -> Popover
+    -- New Reusable component added - emoji-popover.tsx under components [Can be used for Emoji wherever needed]
+    -- We could have used Hint for the Popup: [** How to handle popover for Emojis using popover + tooltip **]
+        -> Not a good idea, --> rather we have write the popover code from scratch using toolTip and popover component.
+        -> Reference: emoji-popover.tsx -->  using toolTip component inside the popover component.
+    
+    Thus we are able to add an Emoji picker ==> Gives the Emoji and Adds at the end of the text in the Editor.
+
+Image Picker:
+    --     
+
+
+
+## Editor Submit Feature.
+
+
+
+
+
+
+
+MileStone_2:
+    -- Now we are able to create a New Workspace and Land to that Workspace Route.
+    -- Created the toolbar/navbar and sidebar UI. 
+    -- Diffenet users with can create and view their own workspaces.
+    -- workspace Admin can update workspace name or Remove the current workspace.
+    -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
+    -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
+    -- User is able to Update Channel Name and Remove Channel From Channel Header.
+    -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.
+    -- Emoji Picker is Implemented using @emoji-mart/data, @emoji-mart/react, popover+toolTip component.
 
 
 NOTE:
@@ -563,8 +600,6 @@ NOTE:
 
 
 
-
-
 [** IMP **]
     -- Working with convex Functions: Ref: convex/members.ts
         -> If Your fucntion returns array of data --> Check case if resp is null --> return [];
@@ -578,17 +613,3 @@ Note: [on shadcn]
     -- We can create our own variant for button using "cva" instead of multiple if-else.. Ref: sidebar-item.tsx 
     -- import { cva, type VariantProps } from 'class-variance-authority'; --> You can see they have done the same in button.tsx under components/ui.
     -- Cleaner way of defining mutiple styles for button.      
-
-
-
-
-
-MileStone_2:
-    -- Now we are able to create a New Workspace and Land to that Workspace Route.
-    -- Created the toolbar/navbar and sidebar UI. 
-    -- Diffenet users with can create and view their own workspaces.
-    -- workspace Admin can update workspace name or Remove the current workspace.
-    -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
-    -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
-    -- User is able to Update Channel Name and Remove Channel From Channel Header.
-    -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.

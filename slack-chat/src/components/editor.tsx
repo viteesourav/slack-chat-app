@@ -9,6 +9,7 @@ import { Hint } from './hint';
 
 import "quill/dist/quill.snow.css";
 import { cn } from '@/lib/utils';
+import { EmojiPopover } from './emoji-popover';
 
 
 //this defines the type for the component Props..
@@ -151,6 +152,14 @@ const Editor = ({
             toolbarElement.classList.toggle('hidden');
         }
     }
+
+    //handles on selection of the emoji from emoji-picker component..
+    const onEmojiSelect = (emoji:any) => {
+        const quill = quillRef.current; //get the instance of the quill editor.. 
+
+        //NOTE: This will add the emoji at the end, this way we always add at the end of the text content..
+        quill?.insertText(quill?.getSelection()?.index || 0, emoji.native); //adds the emoji at the end of the text
+    }
   return (
     <div className="flex flex-col">
         <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
@@ -170,16 +179,17 @@ const Editor = ({
                         <PiTextAa className='size-4' />
                     </Button>
                 </Hint>
-                <Hint label="Emoji" align='center' side='top'>
+                <EmojiPopover
+                    onEmojiSelect={onEmojiSelect}
+                >
                     <Button
                         disabled={disabled}
                         variant={'ghost'}
                         size={'iconSm'}
-                        onClick={()=>{}}
                     >
                         <Smile className='size-4' />
                     </Button>
-                </Hint>
+                </EmojiPopover>
                 {variant === 'create' && (
                     <Hint label="Image" align='center' side='top'>
                         <Button
@@ -232,7 +242,13 @@ const Editor = ({
                 )}
             </div>
         </div>
-        <div className='p-2 text-[10px] text-muted-foreground flex justify-end'>
+        {/* Here, the class name --> Handles the visiblity of this text only when the the editor has come content */}
+        <div 
+            className={cn(
+                'p-2 text-[10px] text-muted-foreground flex justify-end opacity-0',
+                !isEmpty && 'opacity-100'
+            )}
+        >
             <p>
                 <strong>Shift + Enter</strong> to add a new line
             </p>
