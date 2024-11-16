@@ -4,12 +4,14 @@ import { Delta, Op } from 'quill/core';
 import { Button } from './ui/button';
 import { PiTextAa } from "react-icons/pi";
 import { MdSend } from "react-icons/md";
-import { ImageIcon, Smile } from 'lucide-react';
+import { ImageIcon, Smile, XIcon } from 'lucide-react';
 import { Hint } from './hint';
+import { EmojiPopover } from './emoji-popover';
+import Image from 'next/image';
 
 import "quill/dist/quill.snow.css";
 import { cn } from '@/lib/utils';
-import { EmojiPopover } from './emoji-popover';
+
 
 
 //this defines the type for the component Props..
@@ -40,8 +42,10 @@ const Editor = ({
 }:EditorProps) => {
 
     const[text, setText] = useState('');
-    const[isToolbarVisible, setIsToolbarVisible] = useState(true);
+    const[image, setImage] = useState<File | null>(null);
+    const[isToolbarVisible, setIsToolbarVisible] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);  //Ref to the div that will hold the editor
+    const imageElementRef = useRef<HTMLInputElement>(null);  //this holds the reference of the image from the useEffect.
 
     //using Refs to keep track of the props Values --> 1. they dont need to be added to useEffect dependecy + If they change, no re-renders.
     //NOTE: we can call onSubmit inside useEffect, without adding in dependecy and re-renders.
@@ -119,6 +123,9 @@ const Editor = ({
             setText(quill.getText());
         })
 
+        //hides the toolbar...
+        container?.querySelector('.ql-toolbar')?.classList.add('hidden');
+
         //When we unMount this editor component... --> clean it up..
         return () => {
             quill.off(Quill.events.TEXT_CHANGE); //turn off the listner
@@ -162,10 +169,43 @@ const Editor = ({
     }
   return (
     <div className="flex flex-col">
+        {/* Creating a phantom Input to catch the image */}
+        <input
+            type='file'
+            accept='image/*'
+            ref={imageElementRef}
+            onChange={(evt) => setImage(evt.target.files![0])}
+            className='hidden'
+        />
         <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
             
             {/* The qill Editor container */}
             <div ref={containerRef} className='h-full ql-custom' />
+            
+            {/* Displays if any image is selected */}
+            {!!image && (
+                <div className='p-2'>
+                    <div className='relative size-[62px] flex items-center justify-center group/image'>
+                        <Hint label='Remove Image'>
+                            <button onClick={() => {
+                                setImage(null);
+                                imageElementRef.current!.value = "";
+                            }}
+                            className='hidden group-hover/image:flex rounded-full bg-black/70 hover:bg-black absolute -top-2.5 -right-2.5 text-white size-6 z-[4] border-white items-center justify-center'
+                            >
+                                <XIcon className='size-4' />
+                            </button>
+                        </Hint>    
+                        {/* Show the image uploaded */}
+                        <Image 
+                            src={URL.createObjectURL(image)} 
+                            alt='UploadImgSrc'
+                            fill
+                            className='rounded-xl overflow-hidden border object-cover' 
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Holds the Editor Footer icons and Buttons */}
             <div className='flex px-2 pb-2 z-[5]'>
@@ -196,7 +236,7 @@ const Editor = ({
                             disabled={disabled}
                             variant={'ghost'}
                             size={'iconSm'}
-                            onClick={()=>{}}
+                            onClick={()=> imageElementRef.current?.click()}
                         >
                             <ImageIcon className='size-4' />
                         </Button>

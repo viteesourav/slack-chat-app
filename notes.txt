@@ -521,7 +521,9 @@ Conclusion:
 
 
 TODO: [30th Oct]
-## Editor Functionalities --> Emoji Picker & Image Picker.
+## Editor Functionalities --> 
+
+# Emoji Picker
     -- New Package added - @emoji-mart/react, @emoji-mart/data.
     -- New Shadcn Component added -> Popover
     -- New Reusable component added - emoji-popover.tsx under components [Can be used for Emoji wherever needed]
@@ -531,9 +533,25 @@ TODO: [30th Oct]
     
     Thus we are able to add an Emoji picker ==> Gives the Emoji and Adds at the end of the text in the Editor.
 
-Image Picker:
-    --     
 
+TODO: [17th November]
+
+# Image Picker:
+    -- to handle image state --> we added 2 things: 
+        1) One is a state variable and 
+        2) another is a Img ref that can be used to extract the img from useEffect -> saves us any re-renders for the Editior. 
+    -- Concept of Phantom Input:
+        - Requirement, I should be able to open the File select window when i click on Image Icon.
+        - Solution:
+            1. create a input that accepts Images. [type: file] --> Make sure it is hidden and my imageRef point to this element.
+            2. Next onClick of the image Icon --> Call the click method of the imageRef from above. --> This mimic the click on the above input element.
+        - Thus, We are not actually clicking on the Image element but using Ref we are still able to mimic the click on it. [** phantom input **]
+    -- Any File type evt --> has target --> files and value.
+    -- Note: The css position is used to confined the delete button and the image within that space.
+    -- For removing the image --> We are removing the image from the state, And Making the ImageRef.current contains Empty Value.
+    -- For Now we are able to upload only one image.
+
+    Thus, Image Upload Works.
 
 
 ## Editor Submit Feature.
@@ -553,7 +571,7 @@ MileStone_2:
     -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
     -- User is able to Update Channel Name and Remove Channel From Channel Header.
     -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.
-    -- Emoji Picker is Implemented using @emoji-mart/data, @emoji-mart/react, popover+toolTip component.
+    -- Emoji Picker and Image Upload is Implemented using @emoji-mart/data, @emoji-mart/react, popover+toolTip component.
 
 
 NOTE:
