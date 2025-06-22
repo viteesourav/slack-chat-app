@@ -50,8 +50,13 @@ export const UserItem = ({
         className={cn(userItemVariants({variant:variant}))}
         size='sm'
         asChild
+        onClick={(evt)=>{
+            evt.stopPropagation();
+            console.info('###Icon Cliked');
+        }}
     >
-        <Link href={`/workspace/${workspaceId}/members/${id}`}>
+        {/* <Link href={`/workspace/${workspaceId}/members/${id}`}> --> This link here does't Work. */} 
+        <Link href={``}>
             <Avatar className="size-5 rounded-md mr-1">
                 <AvatarImage src={image} className="rounded-md" />
                 <AvatarFallback className="rounded-md bg-sky-400 text-white">

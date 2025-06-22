@@ -554,10 +554,24 @@ TODO: [17th November]
     Thus, Image Upload Works.
 
 
-## Editor Submit Feature.
-
-
-
+Date: [22nd June 2025]
+## Editor Submit Feature:
+    -- The submit event is being handled at chat-input.tsx -> editor.tsx [child component]
+    -- New "message" table is added in the convex schema.
+        -> REcords messages sent in the server throught workspace or part of any channels.
+        -> Includes replies to another messages.
+        -> conversation Messages. [TODO]
+    NOTE:
+        -> Images are stored as v.id("_storage") --> I guess convex stores multi-byte data in this manner.
+    -- create a new method, to create a message with convex db under convex folder.
+    -- We will use a hook to handle this api call. --> under src/feature/messages folder.
+    -- Data Flow:
+        -> we call custom hook --> hooks call convex methods --> contex methods call ctx db functions.
+    -- Here we are successfully able to insert the desired message in the DB.
+    
+    # Image Upload Functionality:     
+        - we should be able to upload the image in convex and store the link to it.
+        - 
 
 
 

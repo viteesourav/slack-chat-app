@@ -54,7 +54,7 @@ export const WorkspaceSection = ({
                             variant='transparent'
                             size='iconSm'
                             onClick={onNew}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity ml-auto p-0.5 text-sm text-[#f9edffcc] size-6 shrink-0"
+                            className="ml-auto px-0.5 py-0.8 text-sm text-[#f9edffcc] size-6 shrink-0"
                         >
                             <PlusIcon className="size-5" />
                         </Button>

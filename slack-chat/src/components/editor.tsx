@@ -87,7 +87,18 @@ const Editor = ({
                         enter: {
                             key: "Enter",  //Enter Key code
                             handler: () => {
-                                //TODO: submit the form, as user hits Enter..
+                                //Submit the form, as user hits Enter..
+                                const text = quill.getText();
+                                const addImage = imageElementRef.current?.files?.[0] || null;
+                                
+                                //if no img and empty new lines..
+                                const isEmpty = !addImage && text.replace(/<(.|\n)*?>/g, '').trim().length === 0; 
+
+                                if(isEmpty) return;
+
+                                const body = JSON.stringify(quill.getContents());
+                                submitRef.current?.({body, image: addImage});
+
                                 return; //prevents default quill behaviour
                             }
                         },
@@ -146,8 +157,8 @@ const Editor = ({
     }, [innerRef]);
 
     //based on text state variable --> If the Editor has content or not..
-    //NOTE: The regex protects --> against any tags, just spaces or empty new line in the editor..
-    const isEmpty = text.replace(/<(.|\n)*?>/g, '').trim().length === 0; //checks if there is any message added in editor .. 
+    //NOTE: The regex protects --> against any tags, just spaces or empty new line in the editor or no image..
+    const isEmpty = !image && text.replace(/<(.|\n)*?>/g, '').trim().length === 0; //checks if there is any message added in editor .. 
 
     //Handles the hide toolbar functionality ..
     const toggelToolbar = () => {
@@ -177,7 +188,10 @@ const Editor = ({
             onChange={(evt) => setImage(evt.target.files![0])}
             className='hidden'
         />
-        <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+        <div className={cn(
+            "flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+            disabled && "opacity-50"
+        )}>
             
             {/* The qill Editor container */}
             <div ref={containerRef} className='h-full ql-custom' />
@@ -248,7 +262,7 @@ const Editor = ({
                             variant={'outline'}
                             size={'sm'}
                             disabled={disabled}
-                            onClick={()=>{}}
+                            onClick={onCancel}
                         >
                             Cancel
                         </Button>
@@ -256,7 +270,12 @@ const Editor = ({
                             className='bg-[#007a5a] hover:bg-[#007a5a]/80 text-white'
                             size={'sm'}
                             disabled={disabled || isEmpty}
-                            onClick={()=>{}}
+                            onClick={() => {
+                                onSubmit({
+                                    body: JSON.stringify(quillRef.current?.getContents()),
+                                    image,
+                                })
+                            }}
                         >
                             Save
                         </Button>
@@ -267,7 +286,12 @@ const Editor = ({
                     <Button
                         disabled={disabled || isEmpty}
                         variant={'default'}
-                        onClick={() => {}}
+                        onClick={() => {
+                            onSubmit({
+                                body: JSON.stringify(quillRef.current?.getContents()),
+                                image,
+                            })
+                        }}
                         size={'iconSm'}
                         // className='ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white'
                         className={
