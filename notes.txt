@@ -577,8 +577,21 @@ Date: [22nd June 2025]
             - Do a fetch call to get details of the image --> fetch the storageId.
             - Store image storageId for reference in Our Message DB for refering to any attached image with message meta-data.
 
-
-
+    # Schema Creation:
+        - Complete the whole schema model for the Slack Couch Chat App.
+        - Added 2 new tables Definations:
+            1. conversations -> store converstation Ids between 2 people.
+            2. reactions -> stores reaction for a message.
+        - Also added it as optional Table column in Messages Table defination.
+        - Do add indexes in schema for querying messages and conversation details.
+        - Handle the case with conversations:
+            - message.ts -> handles message create operations.
+            - NOTE: handle a special case when we are replying in a thread in 1:1 conversation.
+                    -> This message wont be a part of channel or any conversation.
+                    -> but it will have a parent message id.
+    
+    # Messages GET API:
+        - 
 
 
 

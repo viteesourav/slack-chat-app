@@ -23,6 +23,12 @@ const schema = defineSchema({
     workspaceId: v.id("workSpaces")
   })
     .index("by_workspace_id", ["workspaceId"]),
+  conversations: defineTable({
+    workspaceId: v.id("workSpaces"), // each conversation must be inside a workspace.
+    memberOneId: v.id("members"), //first person in a conversation.
+    memberTwoId: v.id("members"), //seconf person in a conversation
+  })
+    .index("by_workspace_id", ["workspaceId"]),
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")),
@@ -30,9 +36,23 @@ const schema = defineSchema({
     workspaceId: v.id("workSpaces"), // directly to a person, not a part of any channel.
     channelId: v.optional(v.id("channels")),  // not all messages through channels mandatorily
     parentMessageId: v.optional(v.id("messages")), // reply to another message.
-    updatedAt: v.number()
-    // TODO: Add Convertional Id...
+    conversationId: v.optional(v.id("conversations")), //converstionId between 2 people.
+    updatedAt: v.number(),
   })
+    .index("by_workspace_Id", ["workspaceId"])
+    .index("by_member_id", ["memberId"])
+    .index("by_channel_id", ["channelId"])
+    .index("by_conversation_id", ["conversationId"])
+    .index("by_channel_id_parent_messageId_conversation_id", ["channelId", "parentMessageId","conversationId"]),
+  reactions: defineTable({
+    workspaceId: v.id("workSpaces"),
+    messageId: v.id("messages"),
+    memberId: v.id("members"),
+    value: v.string(),
+  })
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_message_id", ["messageId"])
+    .index("by_member_id", ["memberId"])
 });
  
 export default schema;
