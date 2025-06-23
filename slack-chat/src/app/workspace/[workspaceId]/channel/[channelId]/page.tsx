@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetByIdChannel } from "@/features/channels/api/use-getById-channel";
+import { useGetMessages } from "@/features/messages/api/use-get-messages";
 import { useChannelId } from "@/hooks/use-channel-id";
 import { Dice1, Loader, TriangleAlert } from "lucide-react";
 import { ChannelHeader } from "./channel-header";
@@ -14,6 +15,9 @@ const ChannelIdPage = () => {
     const{data:channel, isLoading:isChannelLoading} = useGetByIdChannel({
         id: channelId
     })
+    const {results} = useGetMessages({channelId});  //fetch messages
+
+    console.info('### Logs messages:', results);
 
     //handle Early return cases...
     if(isChannelLoading) {
@@ -38,7 +42,9 @@ const ChannelIdPage = () => {
             <ChannelHeader title={channel.name} />
             
             {/* the below div --> a flexible space --> Fill the whole space available */}
-            <div className="flex-1" /> 
+            <div className="flex-1">
+                {JSON.stringify(results)}
+            </div>    
 
             <ChatInput
                 placeholder={`Message # ${channel.name}`}

@@ -587,11 +587,21 @@ Date: [22nd June 2025]
         - Handle the case with conversations:
             - message.ts -> handles message create operations.
             - NOTE: handle a special case when we are replying in a thread in 1:1 conversation.
-                    -> This message wont be a part of channel or any conversation.
+                    -> This message wont be a part of channel or any conversation. i.e channelId or conversationId wont be present.
                     -> but it will have a parent message id.
     
     # Messages GET API:
-        - 
+        - For handleing messages, we need to handle a method to load the thread info.
+        - threadinfo, includes message's Replies, Author info, timestamp etc Ref: messages.ts helper-fucntions.
+        - get messages API: 
+            - we should be able to fetch message based on channelId, converstaionId or parentMessageId.
+            - Also we need to pagination while fetching messages.
+            - For including pagination with Convex:
+                in Query, in args, use paginationOpts: paginationOptsValidator.
+            - Handled the get call for the messages, [Make sure you handle the special case of 1:1 conversation thread]
+            - created hook use-get-messages to handle the paginated response.
+                -> inside only handled the batch size and convex's paginationQuery call.
+        -  Integrate the get Message API, to fetch information of Reactions, thread details, users, members. --> helps us to get enough data to just render in ui.
 
 
 
@@ -658,7 +668,14 @@ NOTE:
     -- Handling Multiple Tables with convex functions. [convex/members.ts/get method]
         -> Querying members table, based on userId --> I want to fetch the details from the user tables.
         -> This takes the ctx and the id --> using the id, it will fetch the details from the respective table.
-
+    -- For paginated Data with Convex:
+        in the args, add paginatedOpts -> paginationOptsValidator.
+        in the ctx.dab.query().withIndex().paginate(args.paginatedOpts)
+        REf: messages.ts, use-get-messages.ts hook.
+    -- JS knowledge,
+       you cannot use async with .map method, but if you wrap it inside a Promise.all, you can use it.
+       REF: messages.ts
+    
 
 Note: [on shadcn]
     -- We can create our own variant for button using "cva" instead of multiple if-else.. Ref: sidebar-item.tsx 

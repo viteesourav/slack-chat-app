@@ -1,11 +1,69 @@
 // Handles all messages operation to Convex...
 
 import { v } from "convex/values";
-import { mutation, QueryCtx } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
+import { paginationOptsValidator } from "convex/server";
 
-//helper-method: to fetch members based on curr workspace and userId.
+//helper-methods
+
+const populateUser = (ctx: QueryCtx, userId: Id<"users">) => {
+  return ctx.db.get(userId);
+};
+
+const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
+  return ctx.db.get(memberId);
+};
+
+// This populates reactions for a particualr message.
+const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
+  return ctx.db
+    .query("reactions")
+    .withIndex("by_message_id", (q) => q.eq("messageId", messageId))
+    .collect();
+};
+
+// This function populate the whole thread including the replies for a particular member
+const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
+  //Load all replies of a particular message.
+  const messages = await ctx.db
+    .query("messages")
+    .withIndex("by_parentMessage_id", (q) => q.eq("parentMessageId", messageId))
+    .collect();
+
+  // If no replies present, Dont show any reply info..
+  if (messages.length === 0) {
+    return {
+      count: 0,
+      image: undefined,
+      timeStamp: 0,
+    };
+  }
+
+  const lastMessage = messages[messages.length - 1];
+  const lastMessageMember = await populateMember(ctx, lastMessage.memberId);
+
+  //If lastMessage's Member is not present --> display some partial info
+  if (!lastMessageMember) {
+    return {
+      count: 0,
+      image: undefined,
+      timeStamp: 0,
+    };
+  }
+
+  const lastMessageUser = await populateUser(ctx, lastMessageMember.userId);
+
+  // a proper structure for the reply message meta-data..
+  return {
+    count: messages.length,
+    image: lastMessageUser?.image, // shows the user's image.
+    timeStamp: lastMessage._creationTime, //shows the last message's timestamp
+  };
+};
+
+//fetch members based on curr workspace and userId.
 const getMember = async (
   ctx: QueryCtx,
   workspaceId: Id<"workSpaces">,
@@ -19,7 +77,7 @@ const getMember = async (
     .unique();
 };
 
-//Handles create message..
+//Handles create New message.)
 export const create = mutation({
   args: {
     body: v.string(),
@@ -66,9 +124,124 @@ export const create = mutation({
       workspaceId: args.workspaceId,
       parentMessageId: args.parentMessageId,
       conversationId: _converstationId,
-      updatedAt: Date.now(), // gives epoch time in number
     });
 
     return messageId;
+  },
+});
+
+//Handles fetching messages based on channelId, conversationId, parentMessageId
+export const get = query({
+  args: {
+    channelId: v.optional(v.id("channels")),
+    conversationId: v.optional(v.id("conversations")),
+    parentMessageId: v.optional(v.id("messages")),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    //Handled Case: If this is a message reply in a 1:1 conversation
+    let _converstationId = args.conversationId;
+
+    if (!args.conversationId && !args.channelId && args.parentMessageId) {
+      const parentMessage = await ctx.db.get(args.parentMessageId);
+
+      if (!parentMessage) {
+        throw new Error("Parent Message Id Not Found");
+      }
+
+      _converstationId = parentMessage.conversationId;
+    }
+
+    const result = ctx.db
+      .query("messages")
+      .withIndex("by_channel_id_parent_messageId_conversation_id", (q) =>
+        q
+          .eq("channelId", args.channelId)
+          .eq("parentMessageId", args.parentMessageId)
+          .eq("conversationId", _converstationId)
+      )
+      .paginate(args.paginationOpts);
+
+    //Just result has no information about the member or is it a reply message or anything
+    // We will update the result, with member and user detials.
+    // NOTE: here, to use async-await inside a map, we wrap it in Promise.all [** IMP **]
+    return {
+      ...result,
+      page: await Promise.all(
+        (await result).page
+          .map(async (message) => {
+            const member = await populateMember(ctx, message.memberId);
+            const user = member ? await populateUser(ctx, member.userId) : null;
+
+            // no user or no member, we cannot show the message.
+            if (!member || !user) {
+              return null;
+            }
+
+            const thread = await populateThread(ctx, message._id);
+
+            //For message, we just store storageId --> we need to generate the url
+            const image = message.image
+              ? await ctx.storage.getUrl(message.image)
+              : undefined;
+
+            // normalize the reactions, to show count of each emoji and all members who reacted with the same emoji.
+            const reactions = await populateReactions(ctx, message._id);
+            const reactionsWithCounts = reactions.map((reaction) => {
+              return {
+                ...reaction,
+                count: reactions.filter((r) => r.value === reaction.value)
+                  .length,
+              };
+            });
+
+            // defined a type of reactions we wanted, additionally, we added count and memberIds, -> how many unique reactions we have and who reacted them.
+            const dedupedReactions = reactionsWithCounts.reduce(
+              (acc, reaction) => {
+                const exisitingReaction = acc.find(
+                  (r) => r.value === reaction.value
+                );
+                // reaction already exist in acc --> update the unique memberIds
+                if (exisitingReaction) {
+                  exisitingReaction.memberIds = Array.from(
+                    new Set([...exisitingReaction.memberIds, reaction.memberId])
+                  );
+                } else {
+                  // a new reaction --> push in acc with membersIds including it's own memberId.
+                  acc.push({ ...reaction, memberIds: [reaction.memberId] });
+                }
+                return acc;
+              },
+              [] as (Doc<"reactions"> & {
+                count: number;
+                memberIds: Id<"members">[];
+              })[]
+            );
+
+            const reactionsWithoutMemberIdProperty = dedupedReactions.map(
+              ({ memberId, ...rest }) => rest
+            );
+
+            // This is the final modified message object that we returrn after modifying all the data
+            return {
+              ...message,
+              image,
+              member,
+              user,
+              reactions: reactionsWithoutMemberIdProperty,
+              threadCount: thread.count,
+              threadImage: thread.image,
+              threadTimestamp: thread.timeStamp,
+            };
+          })
+          .filter((message) => message !== null)
+      ),
+    };
   },
 });
