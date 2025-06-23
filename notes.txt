@@ -571,7 +571,13 @@ Date: [22nd June 2025]
     
     # Image Upload Functionality:     
         - we should be able to upload the image in convex and store the link to it.
-        - 
+        - Concept:
+            - convex has file storage with v.id("_storage") --> stores as storageId.
+            - upload the image here --> get an url using ctx.storage.generateUploadUrl() method.
+            - Do a fetch call to get details of the image --> fetch the storageId.
+            - Store image storageId for reference in Our Message DB for refering to any attached image with message meta-data.
+
+
 
 
 

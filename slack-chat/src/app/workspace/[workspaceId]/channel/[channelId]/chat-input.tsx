@@ -1,16 +1,25 @@
 import { useCreateMessage } from "@/features/messages/api/user-create-message";
+import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
 import { useChannelId } from "@/hooks/use-channel-id";
 import { useWorkSpaceId } from "@/hooks/use-workspace-id";
 import dynamic from "next/dynamic";
 import Quill from "quill";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { Id } from "../../../../../../convex/_generated/dataModel";
 
 // This is how we dynamically loads the Editor component.
 const Editor = dynamic(() => import('@/components/editor'), {ssr: false});
 
 interface ChatInputProps {
   placeholder: string;
+}
+
+type CreateMessageValues = {
+  workspaceId: Id<"workSpaces">;
+  channelId: Id<"channels">;
+  body: string;
+  image?: Id<"_storage"> | undefined;
 }
 
 export const ChatInput = ({
@@ -29,6 +38,9 @@ export const ChatInput = ({
   const channelId = useChannelId();
 
   const {mutate: createMessage } = useCreateMessage();
+  const {
+    mutate: generateUploadUrl
+  } = useGenerateUploadUrl();
 
   const handleSubmit = async ({
     body,
@@ -36,11 +48,43 @@ export const ChatInput = ({
   }: {body: string; image: File | null}) => { 
     try{
       setIsPending(true);
-      await createMessage({
-          workspaceId,
-          channelId,
-          body,
-        }, {
+      editorRef?.current?.enable(false);
+      const values: CreateMessageValues = {
+        workspaceId,
+        channelId,
+        body,
+        image: undefined,
+      }
+
+      //check if image is aadded in Editor.
+      // upload the image to convex _storage --> get the storageId --> put it in create Message Payload.
+      if(image) {
+        const url = await generateUploadUrl({}, {
+          throwError: true
+        });
+
+        if(!url) {
+          throw new Error('Url not Found');
+        }
+
+        const result = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": image.type,
+          },
+          body: image,
+        })
+
+        if(!result.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const { storageId } = await result.json();  // get's the image's storageId
+
+        values.image = storageId;
+      }
+
+      await createMessage(values, {
           throwError: true
         });
 
@@ -49,6 +93,7 @@ export const ChatInput = ({
       toast.error("Failed to send message")
     } finally {
       setIsPending(false);
+      editorRef?.current?.enable(true);
     }  
   }
 
