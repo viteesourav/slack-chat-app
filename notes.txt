@@ -589,7 +589,9 @@ Date: [22nd June 2025]
             - NOTE: handle a special case when we are replying in a thread in 1:1 conversation.
                     -> This message wont be a part of channel or any conversation. i.e channelId or conversationId wont be present.
                     -> but it will have a parent message id.
-    
+
+Date: [23rd June]
+## Messages and MessageList Component:     
     # Messages GET API:
         - For handleing messages, we need to handle a method to load the thread info.
         - threadinfo, includes message's Replies, Author info, timestamp etc Ref: messages.ts helper-fucntions.
@@ -603,6 +605,40 @@ Date: [22nd June 2025]
                 -> inside only handled the batch size and convex's paginationQuery call.
         -  Integrate the get Message API, to fetch information of Reactions, thread details, users, members. --> helps us to get enough data to just render in ui.
 
+    # Message List Component:
+        - Under ChannelId's page.tsx --> You fetch messags now based on channelId.
+        - Renders a seperate re-usable component to messages.
+            -> All messages pops up here from the botton i.e flex-col-reverse.
+            -> We will group the messages based on time when they are send with a seperator.
+            -> needed a bun dependency -> bun add date-fns. [** New dependency added **] --> used for date formatting.
+            -> the above dependecy is used like to show date label like today, yesterday or date format for the message groups.
+        - A message Component to render each messages body.
+        - A render component:
+            - read the body of the message from Quill editor and display the message.
+            - The render is used to dynamically insert QillEditor, This is because the formatting will be preserved.
+            - In the text it will exactly show how it appears in Quill Editor.
+        - Also, we wawnt to show the message creation Time with a Hint menu.
+        -  we have 2 view for message:
+            compact view -> a nice short message text view with time.
+            default view -> see the author's image, name and text message.
+        Case:
+            -> If the user sends messages one of another, then the susequent messages will be compact view.
+            -> else it will be default view [the first message of the user]
+            -> Logic: If current-message and prev-message has same user and diff between creation is 5 mins.
+        -> Also Show an image, if image is present. --> thumbnail.tsx
+        -> When clicked, show the image in a dialogbox.
+
+
+### Major Fix: 
+    issue: Get messages API from convex was returning the default types instead of the types with updated message data
+          like users, members, reactions, threadCount etc are missing.
+    Fix:
+        - This is an issue from convex function, so we need to manually added the types of the data that we are expecting.
+        - Updated the issue with filter in messages.ts --> get method for the page.
+        - In use-get-messages hook, we are manually adding the additional types  + the base type that coming from api.messages.get._returnType.
+        - Also added that as the results return type to solve type-checks issues.
+        - We are using the above type for the message get response.
+        
 
 
 MileStone_2:

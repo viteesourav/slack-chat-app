@@ -158,7 +158,7 @@ export const get = query({
       _converstationId = parentMessage.conversationId;
     }
 
-    const result = ctx.db
+    const results = ctx.db
       .query("messages")
       .withIndex("by_channel_id_parent_messageId_conversation_id", (q) =>
         q
@@ -166,16 +166,17 @@ export const get = query({
           .eq("parentMessageId", args.parentMessageId)
           .eq("conversationId", _converstationId)
       )
+      .order("desc")
       .paginate(args.paginationOpts);
 
     //Just result has no information about the member or is it a reply message or anything
     // We will update the result, with member and user detials.
     // NOTE: here, to use async-await inside a map, we wrap it in Promise.all [** IMP **]
     return {
-      ...result,
-      page: await Promise.all(
-        (await result).page
-          .map(async (message) => {
+      ...results,
+      page: (
+        await Promise.all(
+          (await results).page.map(async (message) => {
             const member = await populateMember(ctx, message.memberId);
             const user = member ? await populateUser(ctx, member.userId) : null;
 
@@ -240,7 +241,9 @@ export const get = query({
               threadTimestamp: thread.timeStamp,
             };
           })
-          .filter((message) => message !== null)
+        )
+      ).filter(
+        (message): message is NonNullable<typeof message> => message !== null
       ),
     };
   },

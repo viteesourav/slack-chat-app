@@ -1,6 +1,6 @@
 import { usePaginatedQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { Id } from "../../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 
 const BATCH_SIZE = 20; // min message count to load
 
@@ -11,8 +11,26 @@ interface UseGetMessagesProps {
 }
 
 // it's paginated so ["page"] is added, and it returns individual messages.
-export type GetMessagesReturnType =
-  (typeof api.messages.get._returnType)["page"];
+// Fix: Convex methods returns only the types that are in backend resp, So manually we are adding additional values here..
+// Adding updated types in response.
+type getMessageBaseReturnType =
+  (typeof api.messages.get._returnType)["page"][number]; // get the type of  an item from the page [page: holds the paginated data]
+
+type EnrichedMessage = getMessageBaseReturnType & {
+  member: Doc<"members">;
+  user: Doc<"users">;
+  reactions: Array<
+    Omit<Doc<"reactions">, "memberId"> & {
+      count: number;
+      memberIds: Id<"members">[];
+    }
+  >;
+  threadCount: number;
+  threadImage?: string;
+  threadTimestamp: number;
+};
+
+export type GetMessagesReturnType = EnrichedMessage[];
 
 export const useGetMessages = ({
   channelId,
@@ -27,7 +45,7 @@ export const useGetMessages = ({
   );
 
   return {
-    results,
+    results: results as GetMessagesReturnType,
     status,
     loadMore: () => loadMore(BATCH_SIZE),
   };
