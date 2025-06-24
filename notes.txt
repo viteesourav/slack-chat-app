@@ -554,6 +554,19 @@ TODO: [17th November]
     Thus, Image Upload Works.
 
 
+MileStone_2:
+    -- Now we are able to create a New Workspace and Land to that Workspace Route.
+    -- Created the toolbar/navbar and sidebar UI. 
+    -- Diffenet users with can create and view their own workspaces.
+    -- workspace Admin can update workspace name or Remove the current workspace.
+    -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
+    -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
+    -- User is able to Update Channel Name and Remove Channel From Channel Header.
+    -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.
+    -- Emoji Picker and Image Upload is Implemented using @emoji-mart/data, @emoji-mart/react, popover+toolTip component.
+    
+
+
 Date: [22nd June 2025]
 ## Editor Submit Feature:
     -- The submit event is being handled at chat-input.tsx -> editor.tsx [child component]
@@ -640,20 +653,17 @@ Date: [23rd June]
         - We are using the above type for the message get response.
         
 
-
-MileStone_2:
-    -- Now we are able to create a New Workspace and Land to that Workspace Route.
-    -- Created the toolbar/navbar and sidebar UI. 
-    -- Diffenet users with can create and view their own workspaces.
-    -- workspace Admin can update workspace name or Remove the current workspace.
-    -- Now we are able to view Channels [For newly created Workspaces] and Associated Members Options in the sidebar.
-    -- Users able to Invite other Members, Other Members can join Other Workspaces [using shared links and Code] 
-    -- User is able to Update Channel Name and Remove Channel From Channel Header.
-    -- Created a Editor Box using quill, Supports Add/Edit Messages with toolbar for text formating.
-    -- Emoji Picker and Image Upload is Implemented using @emoji-mart/data, @emoji-mart/react, popover+toolTip component.
+    ## Channel hero Component:
+        -  
 
 
-NOTE:
+
+
+
+
+
+
+Additional NOTE:
     -- Lucide Icons can be passed as Props to Child component. Ref: In workspace-sidebar component, we are passing "MessageSquareText" Licude Icon as Icon Prop.
         -> In the child comp, You must define the type as LucideIcon OR IconType -> from react-icon/lib.
         -> Also, As you destructure the Props, make sure to Map it to a variable with Caps to use as Component. Ref: sidebar-item.tsx
