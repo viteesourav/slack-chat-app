@@ -1,6 +1,11 @@
 import { differenceInMinutes, format, isToday, isYesterday } from 'date-fns';
 import { GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
 import { Message } from './message';
+import { ChannelHero } from './channel-hero';
+import { useState } from 'react';
+import { Id } from '../../convex/_generated/dataModel';
+import { useWorkSpaceId } from '@/hooks/use-workspace-id';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
 
 // this gives me 5 min after which my messages will fall in default view else it will be compact view
 const TIME_THRESHOLD = 5;
@@ -28,6 +33,10 @@ export const MessageList = ({
      isLoadingMore,
      canLoadMore,   
 }:MessageListProps) => {
+    const[editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+    const workspaceId = useWorkSpaceId();
+
+    const {data: currentMember} = useCurrentMember({id: workspaceId});
 
     // group messages based on sent-time -> {dateKey1: [message2, message1], ... }
     const groupedMessages = data?.reduce(
@@ -86,25 +95,34 @@ export const MessageList = ({
                                         memberId={message.memberId}
                                         authorImage={message.user.image}
                                         authorName={message.user.name}
-                                        isAuthor={false}
+                                        isAuthor={currentMember?._id === message.memberId}
                                         reactions={message.reactions}
                                         body={message.body}
                                         image={message.image}
                                         updatedAt={message.updatedAt}
                                         createdAt={message._creationTime}
-                                        isEditing={false}
-                                        setEditingId={()=>{}}
+                                        isEditing={editingId === message._id}
+                                        setEditingId={setEditingId}
                                         isCompact={isCompactView}
-                                        hideThreadButton={false}
+                                        hideThreadButton={variant === "thread"}  
                                         threadCount={message.threadCount}
                                         threadImage={message.threadImage}
                                         threadTimestamp={message.threadTimestamp}
                                     />
+                                    // Note: If the variant is thread, then it is a reply, You cannot see reply of a reply => hideThreadBtn is hidden if it's already a thread.
                                 )
                             })
                         }
                     </div>
                 ))
+            }
+            {
+                variant === "channel" && channelName && channelCreationTime && (
+                    <ChannelHero
+                        name={channelName}
+                        creationTime={channelCreationTime}
+                    />
+                )
             }
         </div>
     )

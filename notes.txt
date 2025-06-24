@@ -1,4 +1,5 @@
-## Name Of the Application: Slack-chat
+## Name Of the Application: Slack-Couch
+
 ## Tool used: 
     Vscode, 
     Next FrameWork,
@@ -654,7 +655,8 @@ Date: [23rd June]
         
 
     ## Channel hero Component:
-        -  
+        -  A Message header for every last message under a channel.
+        - It is like a zero-state for a channel page. It will appear at the top of all the messages in every channel.
 
 
 
