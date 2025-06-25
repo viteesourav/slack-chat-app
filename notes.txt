@@ -665,8 +665,21 @@ Fix:
             -> Reaction button is visible always.
             -> Reply to thread button is visible only is it's not a thread.
             -> Edit and delete button will come only if you are the author of that message.
-
-
+    
+    ## Edit and delete message funtionality:
+        - feat:
+            -> as the user clicks on the message action like edit,delete -> the message gets highlighted and the toolbar disappears.
+        ## Edit: 
+            - we have created new method under convex/message.ts -> update.
+            - a new hook: use-update-message: updates the message.
+            - dynmaically import the quill editor component --> choose weather to render the Renderer component or editor component.
+            - How we know a message is Edited --> When edited we are populating the upadtedAt with current time.
+            - Both compact view and full message view supports Editing.
+        ## Delete:
+            - we have created new method under convex/message.ts -> delete.
+            - a new hook: use-delete-message: updates the message.
+            - delete works as expected.
+            - Bonus: added a colapse animation when deleted.
 
 
 

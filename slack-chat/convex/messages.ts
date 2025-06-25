@@ -130,6 +130,74 @@ export const create = mutation({
   },
 });
 
+//handles update of messages
+export const update = mutation({
+  args: {
+    id: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx); //get's current user details
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    // checks if the message belong to the current workspace member
+    if (!member || member._id !== message.memberId) {
+      throw new Error("UnAuthorized");
+    }
+
+    // Do a patch update for message...
+    await ctx.db.patch(args.id, {
+      body: args.body,
+      updatedAt: Date.now(),
+    });
+
+    return args.id;
+  },
+});
+
+//handles remove of a messages
+export const remove = mutation({
+  args: {
+    id: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx); //get's current user details
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    // checks if the message belong to the current workspace member
+    if (!member || member._id !== message.memberId) {
+      throw new Error("UnAuthorized");
+    }
+
+    // Do a patch update for message...
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
+
 //Handles fetching messages based on channelId, conversationId, parentMessageId
 export const get = query({
   args: {
