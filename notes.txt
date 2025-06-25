@@ -644,20 +644,27 @@ Date: [23rd June]
 
 
 ### Major Fix: 
-    issue: Get messages API from convex was returning the default types instead of the types with updated message data
-          like users, members, reactions, threadCount etc are missing.
-    Fix:
-        - This is an issue from convex function, so we need to manually added the types of the data that we are expecting.
-        - Updated the issue with filter in messages.ts --> get method for the page.
-        - In use-get-messages hook, we are manually adding the additional types  + the base type that coming from api.messages.get._returnType.
-        - Also added that as the results return type to solve type-checks issues.
-        - We are using the above type for the message get response.
+issue: Get messages API from convex was returning the default types instead of the types with updated message data
+        like users, members, reactions, threadCount etc are missing.
+Fix:
+    - This is an issue from convex function, so we need to manually added the types of the data that we are expecting.
+    - Updated the issue with filter in messages.ts --> get method for the page.
+    - In use-get-messages hook, we are manually adding the additional types  + the base type that coming from api.messages.get._returnType.
+    - Also added that as the results return type to solve type-checks issues.
+    - We are using the above type for the message get response.
         
 
     ## Channel hero Component:
         -  A Message header for every last message under a channel.
         - It is like a zero-state for a channel page. It will appear at the top of all the messages in every channel.
 
+    ## Message Toolbase:
+        - A message toolbar enables us to edit a message, delete a message and react to a particular message.
+        - Activates when user hovers. [using group-hover tailwind css class]
+        - Handles the visibility of different toolbar actions.
+            -> Reaction button is visible always.
+            -> Reply to thread button is visible only is it's not a thread.
+            -> Edit and delete button will come only if you are the author of that message.
 
 
 
