@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Id } from '../../convex/_generated/dataModel';
 import { useWorkSpaceId } from '@/hooks/use-workspace-id';
 import { useCurrentMember } from '@/features/members/api/use-current-member';
+import { Loader } from 'lucide-react';
 
 // this gives me 5 min after which my messages will fall in default view else it will be compact view
 const TIME_THRESHOLD = 5;
@@ -116,6 +117,40 @@ export const MessageList = ({
                     </div>
                 ))
             }
+            {/* This is my observer div to load mroe elements */}
+            <div 
+                className='h-1'
+                ref={(ele) => {
+                    if(ele) {
+                        const observer = new IntersectionObserver(
+                            ([entry]) => {
+                                if(entry.isIntersecting && canLoadMore) {
+                                    loadMore();
+                                }
+                            },{
+                                threshold: 1.0
+                            }
+                        );
+                        observer.observe(ele);
+                        return () => {
+                            observer.disconnect(); //clean-up
+                        }
+                    }
+                }}
+            />
+            {/* Implementing infinite loading to load older messages at top */}
+            {
+                isLoadingMore && (
+                    <div className='text-center my-2 relative'>
+                            <hr className='absolute top-1/2 left-0 right-0 border-t border-gray-300' />
+                            <span className='relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm'>
+                                <Loader className="size-4 animate-spin" />
+                            </span>
+                        </div>
+                )
+            }
+
+            {/* This the channel Hero heading text */}
             {
                 variant === "channel" && channelName && channelCreationTime && (
                     <ChannelHero

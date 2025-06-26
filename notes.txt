@@ -694,6 +694,16 @@ FIX:
                 -> click on the reaction to increase the count, click again to remove it.
                 -> add raction face will be following up, to add new reaction on demand.
 
+## Major Fix:
+    Issue:
+        -- Lets say In use-messages-get, you change the batch size to 3. --> it will get the last 3 latest messages.
+        -- All rest of the messages in the channel will be not shown.
+    
+    Fix: Infinite loading 
+        -- using view-port observer reactions. -> useIntersectionObserver hook on the ref of a div.
+        -- from convex pagination, we get a loadmore function --> This loads more data in batches of pagination.
+        -- also implement a loading indicator when we load more.
+
 
 
 
