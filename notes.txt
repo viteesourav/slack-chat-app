@@ -666,7 +666,7 @@ Fix:
             -> Reply to thread button is visible only is it's not a thread.
             -> Edit and delete button will come only if you are the author of that message.
     
-    ## Edit and delete message funtionality:
+    ## Edit, delete and Reaction message funtionality:
         - feat:
             -> as the user clicks on the message action like edit,delete -> the message gets highlighted and the toolbar disappears.
         ## Edit: 
@@ -680,6 +680,14 @@ Fix:
             - a new hook: use-delete-message: updates the message.
             - delete works as expected.
             - Bonus: added a colapse animation when deleted.
+        ## Messages Reaction:
+            - Needs reactions api to handle reactions. --> a convex method and a hook for the same.
+            - a toggle method to toggle a reaction on a particular message.
+            - Integrate the hook in messages.tsx for both compact form and default view form.
+            - feat:
+                -> you can see the reaction counts and the current user's reaction will be highlughted,
+                -> click on the reaction to increase the count, click again to remove it.
+                -> add raction face will be following up, to add new reaction on demand.
 
 
 
