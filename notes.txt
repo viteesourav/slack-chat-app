@@ -643,15 +643,20 @@ Date: [23rd June]
         -> When clicked, show the image in a dialogbox.
 
 
-### Major Fix: 
+### Major Fix:  -> [False Fix]
 issue: Get messages API from convex was returning the default types instead of the types with updated message data
         like users, members, reactions, threadCount etc are missing.
-Fix:
+Fix: [** NOT NEEDED **]
     - This is an issue from convex function, so we need to manually added the types of the data that we are expecting.
     - Updated the issue with filter in messages.ts --> get method for the page.
     - In use-get-messages hook, we are manually adding the additional types  + the base type that coming from api.messages.get._returnType.
     - Also added that as the results return type to solve type-checks issues.
     - We are using the above type for the message get response.
+
+FIX: 
+    - Convex is returning the correct type. My Mistake was that i was not awaiting the ctx.get.query("messages") in get method.
+    - Fixed -> The types are coming correct, No need for any Enrichments and all.
+
         
 
     ## Channel hero Component:

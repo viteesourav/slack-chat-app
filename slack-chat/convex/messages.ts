@@ -226,7 +226,7 @@ export const get = query({
       _converstationId = parentMessage.conversationId;
     }
 
-    const results = ctx.db
+    const results = await ctx.db
       .query("messages")
       .withIndex("by_channel_id_parent_messageId_conversation_id", (q) =>
         q
@@ -244,7 +244,7 @@ export const get = query({
       ...results,
       page: (
         await Promise.all(
-          (await results).page.map(async (message) => {
+          results.page.map(async (message) => {
             const member = await populateMember(ctx, message.memberId);
             const user = member ? await populateUser(ctx, member.userId) : null;
 

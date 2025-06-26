@@ -10,27 +10,8 @@ interface UseGetMessagesProps {
   parentMessageId?: Id<"messages">;
 }
 
-// it's paginated so ["page"] is added, and it returns individual messages.
-// Fix: Convex methods returns only the types that are in backend resp, So manually we are adding additional values here..
-// Adding updated types in response.
-type getMessageBaseReturnType =
-  (typeof api.messages.get._returnType)["page"][number]; // get the type of  an item from the page [page: holds the paginated data]
-
-type EnrichedMessage = getMessageBaseReturnType & {
-  member: Doc<"members">;
-  user: Doc<"users">;
-  reactions: Array<
-    Omit<Doc<"reactions">, "memberId"> & {
-      count: number;
-      memberIds: Id<"members">[];
-    }
-  >;
-  threadCount: number;
-  threadImage?: string;
-  threadTimestamp: number;
-};
-
-export type GetMessagesReturnType = EnrichedMessage[];
+export type GetMessagesReturnType =
+  (typeof api.messages.get._returnType)["page"];
 
 export const useGetMessages = ({
   channelId,
@@ -45,7 +26,7 @@ export const useGetMessages = ({
   );
 
   return {
-    results: results as GetMessagesReturnType,
+    results,
     status,
     loadMore: () => loadMore(BATCH_SIZE),
   };
