@@ -316,3 +316,87 @@ export const get = query({
     };
   },
 });
+
+// Gets a particular message by id..
+export const getById = query({
+  args: {
+    id: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx); //get's current user details
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      return null;
+    }
+
+    //Prevent any other member who is trying to access the message of a particular workspace.
+    const currentMember = await getMember(ctx, message.workspaceId, userId);
+
+    if (!currentMember) {
+      throw null;
+    }
+
+    const member = await populateMember(ctx, message.memberId);
+
+    if (!member) {
+      return null;
+    }
+
+    // fetch the user details of the member who created that message.
+    const user = await populateUser(ctx, member.userId);
+
+    if (!user) {
+      return null;
+    }
+
+    const reactions = await populateReactions(ctx, message._id);
+
+    const reactionsWithCounts = reactions.map((reaction) => {
+      return {
+        ...reaction,
+        count: reactions.filter((r) => r.value === reaction.value).length,
+      };
+    });
+
+    // defined a type of reactions we wanted, additionally, we added count and memberIds, -> how many unique reactions we have and who reacted them.
+    const dedupedReactions = reactionsWithCounts.reduce(
+      (acc, reaction) => {
+        const exisitingReaction = acc.find((r) => r.value === reaction.value);
+        // reaction already exist in acc --> update the unique memberIds
+        if (exisitingReaction) {
+          exisitingReaction.memberIds = Array.from(
+            new Set([...exisitingReaction.memberIds, reaction.memberId])
+          );
+        } else {
+          // a new reaction --> push in acc with membersIds including it's own memberId.
+          acc.push({ ...reaction, memberIds: [reaction.memberId] });
+        }
+        return acc;
+      },
+      [] as (Doc<"reactions"> & {
+        count: number;
+        memberIds: Id<"members">[];
+      })[]
+    );
+
+    const reactionsWithoutMemberIdProperty = dedupedReactions.map(
+      ({ memberId, ...rest }) => rest
+    );
+
+    return {
+      ...message,
+      image: message.image
+        ? await ctx.storage.getUrl(message.image)
+        : undefined,
+      user,
+      member,
+      reactions: reactionsWithoutMemberIdProperty,
+    };
+  },
+});

@@ -704,6 +704,31 @@ FIX:
         -- from convex pagination, we get a loadmore function --> This loads more data in batches of pagination.
         -- also implement a loading indicator when we load more.
 
+Date: [27th June]
+    ## Thread Funtionality and Features
+        -- new package: bun add nuqs [search params for url state manager for React]
+        NOTE: package dependency:
+            -> You need to wrap the RootLayout [src/app/layout.tsx] with NuqsAdapter --> then only it will work.
+        -- To fetch the parent messageId from url: 
+            -> We will fetch it from the url. [why? No need to manually check if a message in the correct channel or not, more realiable, easy and faster]
+            -> using a hook to fetch the parent message Id with "nuqs".
+            -> usePanel hook is used to handle parentMessageId in the url.
+        -- If we have a ParentMessageId query in the url --> it will show another spliter for the showing thread.  
+        -- How to Open the tread panel ?
+            -> It should open when we click on Replay with thread from Message Toolbar. 
+        -- Inside the Thread Panel:
+            -> We will use the whole mesage List component -> to show thread mesages.
+            -> We are working on this ThreadPanel view inside layout.tsx under the 3rd ResizablePanel view.
+        NOTE: We will get string type from the url using nuqs but we need to manually define the type as Id<"messages"> for it work with convex. Ref: layout.tsx [under Thread component props]
+        - Thread a new component will show the thread-view of messages.
+        - created a new getById.
+            -> Lots of validation before we allow anyone to get the message.
+            -> a part from message details, we also include, reaction details [includes count and groups], member details and user details.
+        - Display the message details at the top. of the thread component. --> Reuse the Message.tsx to show the same.
+        feat:
+            - If you are author, you are allowed to edit, delete the original message from the thread itself.
+            - If you are just a member, you can only send reactions.
+
 
 
 
@@ -766,6 +791,7 @@ Additional NOTE:
     -- JS knowledge,
        you cannot use async with .map method, but if you wrap it inside a Promise.all, you can use it.
        REF: messages.ts
+    NOTE: Dont throw exceptions except unAuthorized in get methods. -> return null.
     
 
 Note: [on shadcn]
