@@ -728,6 +728,14 @@ Date: [27th June]
         feat:
             - If you are author, you are allowed to edit, delete the original message from the thread itself.
             - If you are just a member, you can only send reactions.
+    
+    ## Thread Editor and Chat:
+        - we will bring the Editor component here...
+        - Take reference from chat-input.tsx and have the similar functionality to create message and upload images.
+        - For the Thread Chat view:
+            -> We are going to refer message-list.tsx component [Why not reuse ? --> because of Scroll issues]
+            -> implemetns the reverse chat list logic.
+            -> implement the infite loader div while loading more messages.
 
 
 
