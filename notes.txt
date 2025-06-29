@@ -755,7 +755,10 @@ NOTE:
         - we dont have channelId or conversationId. --> So to get conversationId --> we have parentMessageId [since it is a reply]
         - this gives us the required conversationId while getting messages. [Ref: get method in convex/messages.ts ]
     
-
+    ## Upating the thread bar component.
+        - If a message has a reply, It will be easier to see from here.
+        -  Threadbar Component handles this.
+        - It shows image of the last user to reply on thread, time it was send. --> onClick --> it opens the thread window.
 
 
 

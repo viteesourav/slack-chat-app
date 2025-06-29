@@ -106,6 +106,7 @@ export const MessageList = ({
                   hideThreadButton={variant === "thread"}
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
+                  threadName={message.threadName}
                   threadTimestamp={message.threadTimestamp}
                 />
                 // Note: If the variant is thread, then it is a reply, You cannot see reply of a reply => hideThreadBtn is hidden if it's already a thread.

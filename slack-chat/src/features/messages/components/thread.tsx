@@ -207,7 +207,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
               setEditingId={setEditingId}
             />
             {Object.entries(groupedMessages || {})
-              .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime()) // fix: sorts the dateKey for proper order in ui
+              .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime()) // fix: sorts the dateKey for proper order in ui
               .map(([dateKey, messages]) => (
                 <div key={dateKey}>
                   {/* The below is the message-seperator based on message creation date */}
