@@ -14,15 +14,19 @@ export const ConversationHero = ({
 
   return (
     <div className="mt-[88px] mx-5 mb-2">
-      <div className="flex items-center gap-x-1 mb-2">
+      <div className="flex gap-x-1 mb-2">
         <Avatar className="size-20 mr-2">
           <AvatarImage src={image} />
-          <AvatarFallback>{avatarFallback}</AvatarFallback>
+          <AvatarFallback className="text-5xl font-semibold">
+            {avatarFallback}
+          </AvatarFallback>
         </Avatar>
-        <p className="text-5xl font-bold">{name}</p>
+        <div className="flex items-end">
+          <p className="text-5xl font-bold">{name}</p>
+        </div>
       </div>
-      <p className="font-normal text-slate-800 mb-4">
-        Start a Conversation with <strong> {name} </strong>
+      <p className="text-lg font-normal text-muted-foreground mb-4">
+        Start a Conversation here...
       </p>
     </div>
   );
