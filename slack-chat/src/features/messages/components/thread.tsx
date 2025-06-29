@@ -180,7 +180,7 @@ export const Thread = ({ messageId, onClose }: ThreadProps) => {
         </div>
       ) : (
         // This messages list view is in reverse order i.e flex-col-reverse.
-        <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
+        <div className="flex-1 flex flex-col-reverse pb-1 overflow-y-auto messages-scrollbar">
           <div className="px-4">
             <Editor
               key={editorKey}

@@ -737,6 +737,24 @@ Date: [27th June]
             -> implemetns the reverse chat list logic.
             -> implement the infite loader div while loading more messages.
 
+## Converstaion Functionality.
+    -- When you click on user's [user-item.tsx] --> It should redirect to memberId page.
+    -- New route path we need to create in the project structure.
+    -- To fetch converstaiton:
+        -> Fetch currentMember Detail and the other member detail.
+        -> Find any converstation that exists between this 2 members.
+    feat:
+        -> Click on any member of a workspace to have 1:1 conversation.
+        -> That user's chat and chat history will appear.
+        -> NOTE: Both the members must be the part of a common workspace.
+    Bonus: You can talk to yourself too...
+    -- Add a converstaion header for the asthetics...
+NOTE:
+    the special case here: 
+        - When a user replies to a message inside a 1-1 conversation. We just have the workspaceId and memberId.
+        - we dont have channelId or conversationId. --> So to get conversationId --> we have parentMessageId [since it is a reply]
+        - this gives us the required conversationId while getting messages. [Ref: get method in convex/messages.ts ]
+    
 
 
 
@@ -782,7 +800,9 @@ Additional NOTE:
     -- using regex while text matching...
         - Has to be .replace('/#####/g, '') --> ##### should be your matcher it will look for..
         - eg: .replace('/<(.|\n)*?>/g, '') --> This basically removes any tags like <br><div> etc..
-
+    -- In Convex,
+        Id<"schema_name"> --> when you need to specify Id type for a particular table.
+        Doc<"schema_name"> --> when you need to whole content type of a particular table.
 
 
 [** IMP **]

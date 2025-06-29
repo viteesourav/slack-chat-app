@@ -1,11 +1,12 @@
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import { GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
 import { Message } from "./message";
-import { ChannelHero } from "./channel-hero";
 import { useState } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 import { useWorkSpaceId } from "@/hooks/use-workspace-id";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
+import { ChannelHero } from "./channel-hero";
+import { ConversationHero } from "./conversation-hero";
 import { Loader } from "lucide-react";
 
 // this gives me 2 min after which my messages will fall in default view else it will be compact view
@@ -147,6 +148,10 @@ export const MessageList = ({
       {/* This the channel Hero heading text */}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {/* This the channel Hero heading text */}
+      {variant === "conversation" && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );
