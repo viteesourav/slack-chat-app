@@ -760,6 +760,18 @@ NOTE:
         -  Threadbar Component handles this.
         - It shows image of the last user to reply on thread, time it was send. --> onClick --> it opens the thread window.
 
+## Mmeber Profile Page
+    - If user Image or name is clicked from the message list --> A right panel opens with member's details.
+    - Take the profileMemberId from the url. -> use-profile-member-id hook.
+    - In layout.tsx --> Either profileMemberId or Thread or ParentMessageId will be there in query params.
+    - Thus the right panel switches between profile view or thread view.
+    - It shows image, name and the contact details of a member.
+    - Profile.tsx shows the right panel.
+
+
+
+
+
 
 
 Additional NOTE:

@@ -68,7 +68,9 @@ export const Message = ({
   threadName,
   threadTimestamp,
 }: MessageProps) => {
-  const { parentMessageId, onOpenMessage, onClose } = usePanel(); // get the threadMessageId from url
+  // get the ParentMessageId or ProfileMemberId from url
+  const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
+
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
@@ -81,7 +83,7 @@ export const Message = ({
     "Are you sure you want to delete this message ?"
   );
 
-  const isPending = isUpdatingMessage;
+  const isPending = isUpdatingMessage || isTogglingReaction;
 
   const handleRemove = async () => {
     const ok = await confirm();
@@ -217,7 +219,7 @@ export const Message = ({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar>
               <AvatarImage src={authorImage} />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -240,7 +242,7 @@ export const Message = ({
               <div className="text-sm">
                 <button
                   className="font-bold text-primary hover:underline"
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)} // open's profile right panel view
                 >
                   {authorName}
                 </button>
