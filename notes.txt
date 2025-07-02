@@ -768,9 +768,25 @@ NOTE:
     - It shows image, name and the contact details of a member.
     - Profile.tsx shows the right panel.
 
+## Update Member Role to Admin and Kick Member Functionality:
+    - New API for update Member and delete Member Functionality [convex/members.ts]
+    - Few Rules For updating and removing:
+        updating:
+            - If the current user is not an Admin, you cannot change role of other users.
+        removing:
+            - YOu cannot remove an admin.
+            - YOu cannot remove yourself if you are the admin, otherwise, you can..
+            - When we remove a member, We need to remove all linked messgaes, conversations and reactions.
+    - New Hooks created for handling update Role and Remove member fucntionality.
+    - feat:
+        -> If an Admin is looking at someone's profile -> He can either edit his role or Remove him from chat.
+        -> If a member is looking at his own profile --> Her can Leave the chat.
+        -> If an admin is looking at his profile / A member is looking at admin's profile --> No Option is given.
 
 
-
+Issue1:
+    - When a user leaves a workspace --> A all broken screen comes, He should bre redirected to a default workspace.
+    - After dialog closes the screen freezes.
 
 
 

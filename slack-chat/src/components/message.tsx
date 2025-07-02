@@ -95,9 +95,10 @@ export const Message = ({
           toast.success("Message deleted");
 
           // Close thread if it is opened.. -> we do have close and fall back screen for thread section.
-          // if(parentMessageId === id) {
-          //     onClose();
-          // }
+          // NOTE: we can remove the message from chat-window, and if thread is open, It will colapse.
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");

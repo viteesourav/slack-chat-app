@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, QueryCtx } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
@@ -130,5 +130,129 @@ export const get = query({
 
     //Returns the members details along with it's respective userDetails..
     return members;
+  },
+});
+
+// Handles updating a particular member...
+export const update = mutation({
+  args: {
+    id: v.id("members"),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    //fetch curr Loggedin user..
+    const userId = await getAuthUserId(ctx);
+
+    //if the no userId found..
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.id);
+
+    if (!member) {
+      throw new Error("Membe not found");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", member.workspaceId)
+      )
+      .unique();
+
+    // If the loggedIn user doesn't exist as memeber or is not admin -> throw unAuthorized.
+    if (!currentMember || currentMember.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    // update the role of the user...
+    await ctx.db.patch(args.id, {
+      role: args.role,
+    });
+
+    return args.id; // id of the member whose role we are upgrading..
+  },
+});
+
+// Handles removing a particular member...
+export const remove = mutation({
+  args: {
+    id: v.id("members"),
+  },
+  handler: async (ctx, args) => {
+    //fetch curr Loggedin user..
+    const userId = await getAuthUserId(ctx);
+
+    //if the no userId found..
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.id);
+
+    if (!member) {
+      throw new Error("Membe not found");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", member.workspaceId)
+      )
+      .unique();
+
+    // If the loggedIn user doesn't exist as memeber -> throw unAuthorized.
+    if (!currentMember) {
+      throw new Error("Unauthorized");
+    }
+
+    // cannot remove an admin member...
+    if (member.role === "admin") {
+      throw new Error("Admin cannot be removed");
+    }
+
+    // If your removing self and you are admin -> you cannot do that
+    if (currentMember._id === args.id && currentMember.role === "admin") {
+      throw new Error("Cannot remove yourself, You are an Admin");
+    }
+
+    // we need to remove all messages,reactions and conversations this member has created..
+    const [messages, reactions, conversations] = await Promise.all([
+      ctx.db
+        .query("messages")
+        .withIndex("by_member_id", (q) => q.eq("memberId", member._id))
+        .collect(),
+      ctx.db
+        .query("reactions")
+        .withIndex("by_member_id", (q) => q.eq("memberId", member._id))
+        .collect(),
+      ctx.db
+        .query("conversations")
+        .filter((q) =>
+          q.or(
+            q.eq(q.field("memberOneId"), member._id),
+            q.eq(q.field("memberTwoId"), member._id)
+          )
+        )
+        .collect(),
+    ]);
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    for (const react of reactions) {
+      await ctx.db.delete(react._id);
+    }
+
+    for (const chat of conversations) {
+      await ctx.db.delete(chat._id);
+    }
+
+    // update the role of the user...
+    await ctx.db.delete(args.id);
+
+    return args.id; // id of the member whose role we are upgrading..
   },
 });
