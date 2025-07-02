@@ -800,8 +800,10 @@ NOTE:
       Sol:
         -> Added a 200ms delay when change is done with the dropDown, Gives enough time to run clean-up for dropDown and then open dialog.
 
-
-
+## Working on few pending stuffs:
+    1. When Channel is deleted --> All associated messages msut be deleted.
+    2. When workspace is removed --> All Members, channels, conversation, messages, reactions must be deleted too.
+    3. In Conversation Page, When we click on the header --> It should open the Profile page.
 
 
 Additional NOTE:
