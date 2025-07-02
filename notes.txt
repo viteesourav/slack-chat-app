@@ -784,9 +784,23 @@ NOTE:
         -> If an admin is looking at his profile / A member is looking at admin's profile --> No Option is given.
 
 
-Issue1:
-    - When a user leaves a workspace --> A all broken screen comes, He should bre redirected to a default workspace.
-    - After dialog closes the screen freezes.
+## BugFixes:
+
+    1. When a user leaves a workspace --> A all broken screen comes, He should bre redirected to a default workspace.
+      Issue: 
+        -> next-router naviagtion, is not refreshing and reloading the whole page. It re-directs without refreshing. --> Thats why we see a workspace and channel with Errors.
+      Sol:
+        -> Instead of next-naviagtion, we will use window.location.replace --> This will hard reload the page and also redirects the url.
+
+    2. After dialog closes the screen freezes.
+      -> Normally it works, Problem is when we have dropDown + Dialog box.
+      Issue:
+        -> shad-cn's dialog and dropdown, makes pointer-event to none, to prevent the user from intracting with backgroud event.
+        -> when we click on drop-down, It immediatly opened the dialog, thus, no enough time to do clean-up and reset the pointer-cursor back to auto.
+      Sol:
+        -> Added a 200ms delay when change is done with the dropDown, Gives enough time to run clean-up for dropDown and then open dialog.
+
+
 
 
 

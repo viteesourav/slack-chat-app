@@ -24,7 +24,6 @@ import { useCurrentMember } from "../api/use-current-member";
 import { useWorkSpaceId } from "@/hooks/use-workspace-id";
 import { useUserConfirmation } from "@/hooks/use-user-confirm";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface ProfileProps {
   memberId: Id<"members">;
@@ -32,22 +31,21 @@ interface ProfileProps {
 }
 
 export const Profile = ({ memberId, onClose }: ProfileProps) => {
-  const router = useRouter();
   const workspaceId = useWorkSpaceId();
 
   // confirm dialog before updating, leaving and removing...
-  // const [UpdateDialog, confirmUpdate] = useUserConfirmation(
-  //   "Update Member Role",
-  //   "Are you sure you want to update Member's role ?"
-  // );
-  // const [LeaveDialog, confirmLeave] = useUserConfirmation(
-  //   "Leave Workspace",
-  //   "Are you sure you want to leave the workspace ?"
-  // );
-  // const [RemoveDialog, confirmRemove] = useUserConfirmation(
-  //   "Remove Member",
-  //   "Are you sure you want to remove this member ?"
-  // );
+  const [UpdateDialog, confirmUpdate] = useUserConfirmation(
+    "Update Member Role",
+    "Are you sure you want to update Member's role ?"
+  );
+  const [LeaveDialog, confirmLeave] = useUserConfirmation(
+    "Leave Workspace",
+    "Are you sure you want to leave the workspace ?"
+  );
+  const [RemoveDialog, confirmRemove] = useUserConfirmation(
+    "Remove Member",
+    "Are you sure you want to remove this member ?"
+  );
 
   // get details of the current Member... [helps us to check if he is Admin or not]
   const { data: member, isLoading: isMemberLoading } = useGetByIdMember({
@@ -65,9 +63,9 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
 
   // handles remove a member...
   const onRemove = async () => {
-    // const ok = await confirmRemove();
+    const ok = await confirmRemove();
 
-    // if (!ok) return;
+    if (!ok) return;
 
     removeMember(
       {
@@ -87,16 +85,16 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
 
   // handle levaing the workspace ...
   const onLeave = async () => {
-    // const ok = await confirmLeave();
+    const ok = await confirmLeave();
 
-    // if (!ok) return;
+    if (!ok) return;
     removeMember(
       {
         id: memberId,
       },
       {
         onSuccess: () => {
-          router.replace("/"); //route the user to home-page
+          window.location.replace("/");
           toast.success("You left the workspace");
           onClose(); // closes the profile view
         },
@@ -109,9 +107,9 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
 
   // handle updating member role change...
   const onUpdate = async (role: "admin" | "member") => {
-    // const ok = await confirmUpdate();
+    const ok = await confirmUpdate();
 
-    // if (!ok) return;
+    if (!ok) return;
 
     updateMember(
       {
@@ -169,9 +167,9 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
 
   return (
     <>
-      {/* <UpdateDialog /> */}
-      {/* <RemoveDialog />
-      <LeaveDialog /> */}
+      <UpdateDialog />
+      <RemoveDialog />
+      <LeaveDialog />
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
           <p className="text-lg font-bold"> Profile</p>
@@ -202,9 +200,12 @@ export const Profile = ({ memberId, onClose }: ProfileProps) => {
                 <DropdownMenuContent className="w-full">
                   <DropdownMenuRadioGroup
                     value={member.role}
-                    onValueChange={(role) =>
-                      onUpdate(role as "admin" | "member")
-                    }
+                    onValueChange={(role) => {
+                      // Added this delay sp that, the dropdown can finish unmounting and reseting the pointer-event css property. [Fix]
+                      setTimeout(() => {
+                        onUpdate(role as "admin" | "member");
+                      }, 200);
+                    }}
                   >
                     <DropdownMenuRadioItem value="admin">
                       Admin
