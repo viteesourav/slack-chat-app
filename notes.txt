@@ -805,6 +805,21 @@ NOTE:
     2. When workspace is removed --> All Members, channels, conversation, messages, reactions must be deleted too.
     3. In Conversation Page, When we click on the header --> It should open the Profile page.
 
+## Search Functionality: 
+    -- new package -> command [For handling search functionalities]
+    -- NOTE: installing using npm, not sure, some issue with bun.
+    -- Search functionality implemented with command for Channels and Members. [[workspaceId]/toolbar.tsx]
+    -- user can now see list of all channels and Members and naviagte between them easily.
+
+
+
+
+
+
+
+
+
+
 
 Additional NOTE:
     -- Lucide Icons can be passed as Props to Child component. Ref: In workspace-sidebar component, we are passing "MessageSquareText" Licude Icon as Icon Prop.
