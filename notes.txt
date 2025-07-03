@@ -811,6 +811,10 @@ NOTE:
     -- Search functionality implemented with command for Channels and Members. [[workspaceId]/toolbar.tsx]
     -- user can now see list of all channels and Members and naviagte between them easily.
 
+## Minor bug-fixes:
+    -- The spliter resizes on every refresh. --> default size is not present.
+    -- Not updating the emojie as my emojie picker works fine.
+
 
 
 
