@@ -45,7 +45,7 @@ export const Toolbar = () => {
       {/* This covers the left side empty space of the toolbar */}
       <div className="flex flex-1 space-x-3 justify-start items-center">
         <Armchair className="size-9 text-orange-300 ml-3" />
-        <div className="flex item-center text-xl font-semibold text-white">
+        <div className="hidden sm:flex item-center lg:text-xl  md:text-sm sm:text-xs tracking-wider font-semibold text-white drop-shadow-sm">
           Slack Couch
         </div>
       </div>

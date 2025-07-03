@@ -814,6 +814,8 @@ NOTE:
 ## Minor bug-fixes:
     -- The spliter resizes on every refresh. --> default size is not present.
     -- Not updating the emojie as my emojie picker works fine.
+    -- Fixed the Slack-couch text size as per responsive breakpoints.
+    -- Fixed the footer icon-backgroudn color to black.
 
 
 
